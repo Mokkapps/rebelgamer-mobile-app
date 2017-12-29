@@ -1,0 +1,18 @@
+{
+  "expo": {
+    "name": "RebelGamer",
+    "icon": "./assets/tv.png",
+    "version": "3.0.0",
+    "privacy": "public",
+    "slug": "mokkapps-rebelgamer",
+    "sdkVersion": "23.0.0",
+    "ios": {
+      "bundleIdentifier": "de.mokkapps.rebelgamer.news"
+    },
+    "android": {
+      "package": "de.rebelgamer.RebelGamerRSS"
+    }
+  },
+  "name": "RebelGamer",
+  "displayName": "RebelGamer"
+}

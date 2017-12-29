@@ -1,0 +1,55 @@
+{
+  "name": "RebelGamer",
+  "version": "3.0.0",
+  "private": false,
+  "scripts": {
+    "start": "react-native start",
+    "android": "react-native run-android",
+    "android-logs": "react-native log-android",
+    "android-release": "react-native run-android --variant=release",
+    "ios": "react-native run-ios",
+    "ios-logs": "react-native log-ios",
+    "ios-release": "react-native run-ios --variant=release",
+    "test": "node node_modules/jest/bin/jest.js --watch",
+    "flow": "flow"
+  },
+  "jest": {
+    "automock": false,
+    "setupFiles": [
+      "./test/SetupJest.js"
+    ],
+    "preset": "jest-expo"
+  },
+  "dependencies": {
+    "babel-plugin-transform-remove-console": "^6.8.5",
+    "html-entities": "^1.2.1",
+    "lodash": "^4.17.4",
+    "moment": "^2.20.1",
+    "react": "16.0.0",
+    "react-native": "0.50.3",
+    "react-native-easy-toast": "^1.0.9",
+    "react-native-elements": "^0.18.5",
+    "react-native-email": "^1.0.0",
+    "react-native-render-html": "^3.5.2",
+    "react-native-vector-icons": "^4.4.3",
+    "react-native-webview-autoheight": "^1.0.4",
+    "react-navigation": "^1.0.0-beta.22",
+    "rxjs": "^5.5.6"
+  },
+  "devDependencies": {
+    "babel-cli": "^6.26.0",
+    "babel-eslint": "^8.1.2",
+    "babel-preset-flow": "^6.23.0",
+    "babel-preset-react-native-stage-0": "^1.0.1",
+    "eslint": "^4.14.0",
+    "eslint-config-airbnb": "^16.1.0",
+    "eslint-plugin-import": "^2.8.0",
+    "eslint-plugin-jest": "^21.5.0",
+    "eslint-plugin-jsx-a11y": "^6.0.3",
+    "eslint-plugin-react": "^7.5.1",
+    "flow-bin": "0.56.0",
+    "jest-expo": "23.0.0",
+    "jest-fetch-mock": "^1.4.0",
+    "react-test-renderer": "16.0.0"
+  }
+}
