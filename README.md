@@ -44,4 +44,3 @@ Please create a [GitHub issue](https://github.com/MrMojo86/RebelGamer/issues)
 # Known issues
 
 * Android: Clicking on links in the detail view opens the link in a new browser window but the WebView also navigates to this page
-* Tags are shown in one row and overlap on small screens
