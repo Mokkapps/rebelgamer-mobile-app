@@ -8,7 +8,7 @@
 
 This repository contains the code of the iOS & Android app of the gaming blog [RebelGamer](https://www.rebelgamer.de).
 
-It was developed using [React Native](https://facebook.github.io/react-native/).
+It was developed using [React Native](https://facebook.github.io/react-native/) and uses the WordPress REST API to fetch the posts.
 
 <img src="http://mokkapps.de/wp-content/uploads/2017/12/Nexus-6P-Screenshot1-1.png" width="250">
 
@@ -44,3 +44,4 @@ Please create a [GitHub issue](https://github.com/MrMojo86/RebelGamer/issues)
 # Known issues
 
 * Android: Clicking on links in the detail view opens the link in a new browser window but the WebView also navigates to this page
+* Tags are shown in one row and overlap on small screens
