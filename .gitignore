@@ -3,10 +3,12 @@
 .vscode
 
 # iOS build
-ios/build/
+/ios/build/
 
 # Android
 *.keystore
+/android/build
+/android/app/build
 
 # Xcode
 !**/*.xcodeproj

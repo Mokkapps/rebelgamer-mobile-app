@@ -10,11 +10,15 @@ This repository contains the code of the iOS & Android app of the gaming blog [R
 
 It was developed using [React Native](https://facebook.github.io/react-native/).
 
+<img src="http://mokkapps.de/wp-content/uploads/2017/12/Nexus-6P-Screenshot1-1.png" width="250">
+
 # App Store links
+
 * [iOS](https://itunes.apple.com/de/app/rebelgamer-news-fur-gamer/id1187403828)
 * [Android](https://play.google.com/store/apps/details?id=de.rebelgamer.RebelGamerRSS)
 
 # Getting Started
+
 ```
 $ git clone https://github.com/MrMojo86/RebelGamer.git
 $ cd rebelgamer
@@ -27,13 +31,16 @@ $ react-native run-android
 ```
 
 # Report a bug
+
 Please create a [GitHub issue](https://github.com/MrMojo86/RebelGamer/issues)
 
 # Using
-- [React Native](https://facebook.github.io/react-native/)
-- [React Navigation](https://reactnavigation.org/)
-- [React Native Elements ](https://react-native-training.github.io/react-native-elements/)
-- [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
+
+* [React Native](https://facebook.github.io/react-native/)
+* [React Navigation](https://reactnavigation.org/)
+* [React Native Elements ](https://react-native-training.github.io/react-native-elements/)
+* [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
 
 # Known issues
+
 * Android: Clicking on links in the detail view opens the link in a new browser window but the WebView also navigates to this page
