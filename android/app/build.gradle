@@ -101,8 +101,8 @@ android {
     defaultConfig {
         applicationId "de.rebelgamer.RebelGamerRSS"
         minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 30
+        targetSdkVersion 23
+        versionCode 31
         versionName "3.0"
         ndk {
             abiFilters "armeabi-v7a", "x86"
