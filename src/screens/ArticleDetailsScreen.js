@@ -126,6 +126,7 @@ export default class ArticleListScreen extends React.Component<Props, State> {
     const { article } = this.props.navigation.state.params;
     const tags = article._embedded['wp:term'][1].map(tag => (
       <Badge
+        wrapperStyle={{ padding: 5 }}
         key={tag.id}
         value={tag.name || ''}
         textStyle={{ color: 'white' }}
@@ -145,7 +146,7 @@ export default class ArticleListScreen extends React.Component<Props, State> {
           {HtmlDecoder.decodeHtml(article.title.rendered)}
         </Text>
         <Text style={styles.author}>
-          {`${moment(article.date).format('DD. MMMM YYYY, HH:mm')} | von ${
+          {`${moment(article.date).format('DD.MM.YYYY, HH:mm')} | von ${
             article._embedded.author[0].name
           }`}
         </Text>
@@ -201,6 +202,7 @@ const styles = StyleSheet.create({
   tagList: {
     flex: 1,
     flexDirection: 'row',
+    flexWrap: 'wrap',
     justifyContent: 'space-around',
     margin: 5
   }
