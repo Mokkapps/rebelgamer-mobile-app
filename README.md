@@ -17,17 +17,25 @@ It was developed using [React Native](https://facebook.github.io/react-native/) 
 * [iOS](https://itunes.apple.com/de/app/rebelgamer-news-fur-gamer/id1187403828)
 * [Android](https://play.google.com/store/apps/details?id=de.rebelgamer.RebelGamerRSS)
 
-# Getting Started
+# Run locally on your development machine
 
 ```
-$ git clone https://github.com/MrMojo86/RebelGamer.git
+$ git clone https://github.com/Mokkapps/rebelgamer-mobile-app
 $ cd rebelgamer
 $ npm install
 $ npm start
 
-$ react-native run-ios
+$ npm android
 or
-$ react-native run-android
+$ npm ios
+```
+
+# Create release
+
+```
+$ npm android-release
+or
+$ npm ios-release
 ```
 
 # Report a bug
