@@ -1,6 +1,13 @@
 {
-  "name": "rebelgamer",
+  "name": "rebelgamer-mobile-app",
   "version": "3.1.0",
+  "description": "Mobile app for the gaming blog \"RebelGamer\"",
+  "homepage": "https://github.com/Mokkapps/rebelgamer-mobile-app",
+  "author": {
+    "name": "Michael Hoffmann",
+    "email": "kontakt@mokkapps.de",
+    "url": "https://www.mokkapps.de"
+  },
   "private": false,
   "scripts": {
     "start": "react-native start",
@@ -13,7 +20,8 @@
     "ios-logs": "react-native log-ios",
     "ios-release": "react-native run-ios --variant=release",
     "test": "node node_modules/jest/bin/jest.js --watch",
-    "flow": "flow"
+    "flow": "flow",
+    "upgrade-react-native": "react-native upgrade"
   },
   "jest": {
     "automock": false,
