@@ -2,25 +2,23 @@
 
 import {
   ActivityIndicator,
-  Image,
   Linking,
   Platform,
   ScrollView,
   Share,
   StyleSheet,
-  Text,
   View
 } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
-import moment from 'moment';
 import MyWebView from 'react-native-webview-autoheight';
 import React from 'react';
 
-import Constants from './../Constants';
+import Constants from './../constants';
 import HtmlDecoder from './../utils/HtmlDecoder';
-import Post from './../Types';
-import Style from './../Styles';
+import Post from './../types';
+import Style from './../styles';
 import Translate from './../utils/Translate';
+import ArticleDetailsHeader from './ArticleDetailsHeader';
 
 type Props = {
   navigation: {
@@ -38,9 +36,34 @@ type Props = {
   }
 };
 
-type State = {};
+type State = {
+  loading: boolean
+};
 
-export default class ArticleListScreen extends React.Component<Props, State> {
+const styles = StyleSheet.create({
+  separator: {
+    height: 1,
+    backgroundColor: '#CED0CE',
+    margin: 5
+  },
+  headerButtonGroup: {
+    flex: 1,
+    flexDirection: 'row',
+    justifyContent: 'space-around',
+    width: 70,
+    marginRight: 10
+  },
+  tagList: {
+    flex: 1,
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    justifyContent: 'space-around',
+    margin: 5
+  }
+});
+
+class ArticleDetails extends React.Component<Props, State> {
+
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state;
     const { article } = params;
@@ -61,12 +84,40 @@ export default class ArticleListScreen extends React.Component<Props, State> {
     };
   };
 
-  componentDidMount() {
-    this.props.navigation.setParams({ handleShare: this._shareArticle });
-    this.props.navigation.setParams({ handleOpenInBrowser: this._openUrl });
+  constructor(props: Props) {
+    super(props);
+    this.setState({
+      loading: true
+    });
   }
 
-  _openUrl = (url: string) => {
+  componentDidMount() {
+    this.props.navigation.setParams({ handleShare: this.shareArticle });
+    this.props.navigation.setParams({ handleOpenInBrowser: this.openUrl });
+  }
+
+  onLinkPress = (evt: any, href: string) => {
+    this.openUrl(href);
+  };
+
+  onShouldStartLoadWithRequest = event => {
+    if (Platform.OS === 'ios' && event.navigationType === 'click') {
+      Linking.openURL(event.url);
+      return false;
+    } else if (Platform.OS === 'android') {
+      const { article } = this.props.navigation.state.params;
+      if (
+        event.url !== article.link &&
+        event.url !== 'file:///android_asset/'
+      ) {
+        this.openUrl(event.url);
+      }
+    }
+
+    return true;
+  };
+
+  openUrl = (url: string) => {
     Linking.canOpenURL(url)
       .then(supported => {
         if (!supported) {
@@ -78,15 +129,13 @@ export default class ArticleListScreen extends React.Component<Props, State> {
       .catch(err => console.error('An error occurred', err));
   };
 
-  _shareArticle = () => {
+  shareArticle = () => {
     const { params } = this.props.navigation.state;
     const { article } = params;
     const appName: string = Translate.translate('appName');
     Share.share(
       {
-        message: `${HtmlDecoder.decodeHtml(article.title.rendered)} - ${
-          article.link
-        }`,
+        message: `${HtmlDecoder.decodeHtml(article.title.rendered)} - ${article.link}`,
         title: appName,
         url: article.link
       },
@@ -95,31 +144,6 @@ export default class ArticleListScreen extends React.Component<Props, State> {
         dialogTitle: Translate.translate('shareDialogTitle')
       }
     );
-  };
-
-  _onLinkPress = (evt: any, href: string) => {
-    this._openUrl(href);
-  };
-
-  _renderLoadingView() {
-    return <ActivityIndicator color={Constants.RebelGamerRed} size="large" />;
-  }
-
-  _onShouldStartLoadWithRequest = event => {
-    if (Platform.OS === 'ios' && event.navigationType === 'click') {
-      Linking.openURL(event.url);
-      return false;
-    } else if (Platform.OS === 'android') {
-      const { article } = this.props.navigation.state.params;
-      if (
-        event.url !== article.link &&
-        event.url !== 'file:///android_asset/'
-      ) {
-        this._openUrl(event.url);
-      }
-    }
-
-    return true;
   };
 
   render() {
@@ -133,24 +157,11 @@ export default class ArticleListScreen extends React.Component<Props, State> {
         containerStyle={{ backgroundColor: Constants.RebelGamerRed }}
       />
     ));
+    const loadingView = <ActivityIndicator color={Constants.RebelGamerRed} size="large" />;
 
     return (
       <ScrollView>
-        <Image
-          style={styles.image}
-          source={{
-            uri: article._embedded['wp:featuredmedia'][0].source_url
-          }}
-        />
-        <Text style={styles.headline}>
-          {HtmlDecoder.decodeHtml(article.title.rendered)}
-        </Text>
-        <Text style={styles.author}>
-          {`${moment(article.date).format('DD.MM.YYYY, HH:mm')} | von ${
-            article._embedded.author[0].name
-          }`}
-        </Text>
-        <View style={styles.tagList}>{tags}</View>
+        <ArticleDetailsHeader article={article} />
         <View style={styles.separator} />
         <MyWebView
           style={{
@@ -162,48 +173,15 @@ export default class ArticleListScreen extends React.Component<Props, State> {
             baseUrl: Platform.OS === 'android' ? 'file:///android_asset/' : ''
           }}
           startInLoadingState
-          renderLoading={this._renderLoadingView}
-          onShouldStartLoadWithRequest={this._onShouldStartLoadWithRequest}
-          onNavigationStateChange={this._onShouldStartLoadWithRequest}
+          renderLoading={loadingView}
+          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
+          onNavigationStateChange={this.onShouldStartLoadWithRequest}
         />
+        <View style={styles.separator} />
+        <View style={styles.tagList}>{tags}</View>
       </ScrollView>
     );
   }
 }
 
-const styles = StyleSheet.create({
-  separator: {
-    height: 1,
-    backgroundColor: '#CED0CE',
-    margin: 5
-  },
-  author: {
-    fontSize: Constants.FontSizeDetailsDate,
-    textAlign: 'center',
-    margin: 5
-  },
-  image: {
-    height: Constants.HeadlineImageHeigth
-  },
-  headline: {
-    textAlign: 'center',
-    fontWeight: 'bold',
-    color: 'black',
-    fontSize: Constants.FontSizeHeadline,
-    margin: 5
-  },
-  headerButtonGroup: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: 70,
-    marginRight: 10
-  },
-  tagList: {
-    flex: 1,
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    justifyContent: 'space-around',
-    margin: 5
-  }
-});
+export default ArticleDetails;

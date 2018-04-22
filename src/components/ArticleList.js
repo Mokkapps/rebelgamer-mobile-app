@@ -16,13 +16,14 @@ import React from 'react';
 import { Subscription } from 'rxjs/Subscription';
 import Toast from 'react-native-easy-toast';
 import type { NavigationState } from 'react-navigation/src/TypeDefinition';
+import 'rxjs/add/observable/from';
+import { Observable } from 'rxjs/Observable';
 
-import ArticleHeadline from './../components/ArticleHeadline';
-import Constants from './../Constants';
-import FetchService from './../services/FetchService';
+import ArticleListItem from './../components/ArticleListItem';
+import Constants from './../constants';
 import HeaderImage from './../components/HeaderImage';
 import NetInfoUtils from './../utils/NetInfoUtils';
-import Post from './../Types';
+import Post from './../types';
 import Translate from './../utils/Translate';
 
 type Props = {
@@ -37,7 +38,34 @@ type State = {
   searchText: string
 };
 
-export default class ArticleListScreen extends React.Component<Props, State> {
+const WP_BASE_URL = 'https://www.rebelgamer.de/wp-json/wp/v2/';
+const POSTS_PER_PAGE = 5;
+const styles = StyleSheet.create({
+  container: {
+    flex: 1
+  },
+  separator: {
+    height: 1,
+    width: '86%',
+    backgroundColor: '#CED0CE',
+    marginLeft: '14%'
+  },
+  footer: {
+    paddingVertical: 20,
+    borderTopWidth: 1,
+    borderColor: '#CED0CE'
+  },
+  headerImage: {
+    marginLeft: Platform.OS === 'android' ? 50 : 0,
+    marginTop: 5,
+    height: 40,
+    resizeMode: 'contain',
+    alignSelf: 'center'
+  }
+});
+
+class ArticleList extends React.Component<Props, State> {
+
   static navigationOptions = ({ navigation }) => {
     const { navigate } = navigation;
 
@@ -48,7 +76,7 @@ export default class ArticleListScreen extends React.Component<Props, State> {
         <Icon
           iconStyle={{ marginRight: 10 }}
           name="info-outline"
-          onPress={() => navigate('Info')}
+          onPress={() => navigate('About')}
         />
       )
     };
@@ -65,19 +93,18 @@ export default class ArticleListScreen extends React.Component<Props, State> {
       searchText: ''
     };
     this.onSearchTextDelayed = debounce(
-      this._handleSearchOnChange.bind(this),
+      this.handleSearchOnChange.bind(this),
       500
     );
   }
 
   componentDidMount() {
-    this._fetchPosts();
+    this.loadPosts();
   }
 
   onSearchTextDelayed: Function;
-  subscription: Subscription;
 
-  async _getStoredPosts(): Promise<Post[]> {
+  async getStoredPosts(): Promise<Post[]> {
     let storedPosts: string = '';
     try {
       storedPosts = await AsyncStorage.getItem(Constants.StorageKey);
@@ -88,65 +115,82 @@ export default class ArticleListScreen extends React.Component<Props, State> {
     return Promise.resolve(storedPosts ? JSON.parse(storedPosts) : []);
   }
 
-  _checkConnection = async () => {
-    const hasInternetConnection = await NetInfoUtils.hasInternetConnection();
-    if (!hasInternetConnection) {
-      // eslint-disable-next-line react/no-string-refs
-      this.refs.toast.show(Translate.translate('loadStoredArticles'), 5000);
-      const posts = await this._getStoredPosts();
-      if (posts) {
-        this.setState({ data: posts });
-      }
-    }
-    return hasInternetConnection;
-  };
+  getPost$(page: number, search: string): Observable<Post[]> {
+    const request = fetch(
+      `${WP_BASE_URL}posts?_embed=true&page=${page}&per_page=${POSTS_PER_PAGE}&search=${search}`
+    ).then(response => response.json());
 
-  _fetchPosts = async () => {
+    return Observable.from(request);
+  }
+
+  getStoredArticles = async () => {
+    // eslint-disable-next-line react/no-string-refs
+    this.refs.toast.show(Translate.translate('loadStoredArticles'), 5000);
+    return this.getStoredPosts();
+  }
+
+  postsSubscription: Subscription;
+
+  loadPosts = async () => {
     this.setState({ loading: true });
 
-    const hasInternetConnection = await this._checkConnection();
+    const hasInternetConnection = await NetInfoUtils.hasInternetConnection();
     if (!hasInternetConnection) {
+      const storedPosts = await this.loadStoredArticles();
+      if (storedPosts) {
+        this.setState({
+          data: [...this.state.data, ...storedPosts],
+          loading: false,
+          refreshing: false
+        });
+      }
       return;
     }
 
     const { page } = this.state;
+    this.clearListIfNecessary();
 
-    // Clear article list if necessary
+    if (this.postsSubscription) {
+      this.postsSubscription.unsubscribe();
+    }
+    this.postsSubscription = this.getPost$(
+      page,
+      this.state.searchText
+    ).subscribe(
+      (posts: Post[]) => {
+        this.handleFetchedPosts(posts);
+      },
+      error => {
+        console.error(error);
+        this.setState({ loading: false, refreshing: false });
+        this.showAlert(error);
+      }
+    );
+  };
+
+  clearListIfNecessary = () => {
     if (
       (this.state.searchText && this.state.page === 1) ||
       this.state.refreshing
     ) {
       this.setState({ data: [] });
     }
+  }
 
-    if (this.subscription) {
-      this.subscription.unsubscribe();
-    }
-    this.subscription = FetchService.getPosts(
-      page,
-      this.state.searchText
-    ).subscribe(
-      (posts: Post[]) => {
-        this.setState({
-          data: [...this.state.data, ...posts],
-          loading: false,
-          refreshing: false
-        });
+  handleFetchedPosts = (posts: Post[]) => {
+    this.setState({
+      data: [...this.state.data, ...posts],
+      loading: false,
+      refreshing: false
+    });
 
-        AsyncStorage.setItem(
-          Constants.StorageKey,
-          JSON.stringify(this.state.data)
-        );
-      },
-      error => {
-        console.error(error);
-        this.setState({ loading: false });
-        this._showAlert(error);
-      }
+    AsyncStorage.setItem(
+      Constants.StorageKey,
+      JSON.stringify(this.state.data)
     );
-  };
+  }
 
-  _showAlert = (error: string) => {
+  showAlert = (error: string) => {
     Alert.alert(
       Translate.translate('alertTitle'),
       `${Translate.translate('alertMessage')} ${error}`,
@@ -161,37 +205,37 @@ export default class ArticleListScreen extends React.Component<Props, State> {
     );
   };
 
-  _handleRefresh = () => {
+  handleRefresh = () => {
     this.setState(
       {
         refreshing: true,
         page: 1
       },
       () => {
-        this._fetchPosts();
+        this.loadPosts();
       }
     );
   };
 
-  _handleLoadMore = () => {
+  handleLoadMore = () => {
     this.setState(
       {
         page: this.state.page + 1
       },
       () => {
-        this._fetchPosts();
+        this.loadPosts();
       }
     );
   };
 
-  _handleSearchOnChange = (searchText: string) => {
+  handleSearchOnChange = (searchText: string) => {
     this.setState({ searchText });
-    this._fetchPosts();
+    this.loadPosts();
   };
 
-  _renderSeparator = () => <View style={styles.separator} />;
+  renderSeparator = () => <View style={styles.separator} />;
 
-  _renderHeader = () => (
+  renderHeader = () => (
     <SearchBar
       lightTheme
       onChangeText={this.onSearchTextDelayed}
@@ -199,7 +243,7 @@ export default class ArticleListScreen extends React.Component<Props, State> {
     />
   );
 
-  _renderFooter = () => {
+  renderFooter = () => {
     if (!this.state.loading) return null;
 
     return (
@@ -224,18 +268,18 @@ export default class ArticleListScreen extends React.Component<Props, State> {
             <TouchableHighlight
               onPress={() => navigate('ArticleDetails', { article: item })}
             >
-              <ArticleHeadline article={item} />
+              <ArticleListItem article={item} />
             </TouchableHighlight>
           )}
           keyExtractor={(item: Post) => item.id}
-          ItemSeparatorComponent={this._renderSeparator}
-          ListHeaderComponent={this._renderHeader}
+          ItemSeparatorComponent={this.renderSeparator}
+          ListHeaderComponent={this.renderHeader}
           // Necessary to show footer on Android
           // eslint-disable-next-line react/jsx-no-bind
-          ListFooterComponent={this._renderFooter.bind(this)}
+          ListFooterComponent={this.renderFooter.bind(this)}
           refreshing={this.state.refreshing}
-          onRefresh={this._handleRefresh}
-          onEndReached={this._handleLoadMore}
+          onRefresh={this.handleRefresh}
+          onEndReached={this.handleLoadMore}
           onEndReachedThreshold={0.5}
         />
         <Toast
@@ -248,26 +292,4 @@ export default class ArticleListScreen extends React.Component<Props, State> {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1
-  },
-  separator: {
-    height: 1,
-    width: '86%',
-    backgroundColor: '#CED0CE',
-    marginLeft: '14%'
-  },
-  footer: {
-    paddingVertical: 20,
-    borderTopWidth: 1,
-    borderColor: '#CED0CE'
-  },
-  headerImage: {
-    marginLeft: Platform.OS === 'android' ? 50 : 0,
-    marginTop: 5,
-    height: 40,
-    resizeMode: 'contain',
-    alignSelf: 'center'
-  }
-});
+export default ArticleList;

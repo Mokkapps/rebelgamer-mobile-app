@@ -2,29 +2,29 @@
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
-import Constants from './../Constants';
+import Constants from './../constants';
 import DateUtils from './../utils/DateUtils';
 import HtmlDecoder from './../utils/HtmlDecoder';
-import Post from './../Types';
+import Post from './../types';
 
 type Props = {
   article: Post
 };
 
-export default class ArticleHeadline extends React.PureComponent<Props> {
+class ArticleListItem extends React.PureComponent<Props> {
   setNativeProps = (nativeProps: Props) => {
-    if (this._root) {
-      this._root.setNativeProps(nativeProps);
+    if (this.root) {
+      this.root.setNativeProps(nativeProps);
     }
   };
 
-  _root: View | null;
+  root: View | null;
 
   render() {
     const { article } = this.props;
     return (
       // eslint-disable-next-line no-return-assign
-      <View ref={component => (this._root = component)} {...this.props}>
+      <View ref={component => (this.root = component)} {...this.props}>
         <Image
           style={styles.image}
           source={{ uri: article._embedded['wp:featuredmedia'][0].source_url }}
@@ -63,3 +63,5 @@ const styles = StyleSheet.create({
     fontSize: Constants.FontSizeListDate
   }
 });
+
+export default ArticleListItem;

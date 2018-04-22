@@ -10,8 +10,10 @@ type Props = {
 };
 type State = {};
 
-export default class HeaderImage extends React.Component<Props, State> {
+class HeaderImage extends React.Component<Props, State> {
   render() {
     return <Image style={this.props.style} source={headerImage} />;
   }
 }
+
+export default HeaderImage;
