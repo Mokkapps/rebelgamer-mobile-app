@@ -1,6 +1,6 @@
 {
   "name": "rebelgamer-mobile-app",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "description": "Mobile app for the gaming blog \"RebelGamer\"",
   "homepage": "https://github.com/Mokkapps/rebelgamer-mobile-app",
   "author": {
@@ -34,16 +34,16 @@
     "babel-plugin-transform-remove-console": "^6.9.0",
     "html-entities": "^1.2.1",
     "lodash": "^4.17.5",
-    "moment": "^2.22.0",
-    "react": "16.3.0",
-    "react-native": "0.54.4",
+    "moment": "^2.22.1",
+    "react": "16.3.2",
+    "react-native": "0.55.3",
     "react-native-easy-toast": "1.1.0",
-    "react-native-elements": "^0.19.0",
+    "react-native-elements": "^0.19.1",
     "react-native-email": "^1.0.1",
     "react-native-render-html": "^3.9.3",
     "react-native-vector-icons": "^4.6.0",
     "react-native-webview-autoheight": "^1.0.5",
-    "react-navigation": "^1.5.9",
+    "react-navigation": "^1.5.11",
     "rxjs": "^5.5.8"
   },
   "devDependencies": {

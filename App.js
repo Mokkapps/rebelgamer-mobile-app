@@ -1,13 +1,13 @@
 import { StackNavigator } from 'react-navigation';
 
-import ArticleListScreen from './src/screens/ArticleListScreen';
-import ArticleDetailsScreen from './src/screens/ArticleDetailsScreen';
-import InfoScreen from './src/screens/InfoScreen';
+import ArticleList from './src/components/ArticleList';
+import ArticleDetails from './src/components/ArticleDetails';
+import About from './src/components/About';
 
 const App = StackNavigator({
-  ArticleList: { screen: ArticleListScreen },
-  ArticleDetails: { screen: ArticleDetailsScreen },
-  Info: { screen: InfoScreen }
+  ArticleList: { screen: ArticleList },
+  ArticleDetails: { screen: ArticleDetails },
+  About: { screen: About }
 });
 
 export default App;

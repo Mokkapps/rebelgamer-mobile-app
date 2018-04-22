@@ -3,11 +3,11 @@
 import moment from 'moment';
 
 class DateUtils {
-  getPostedAtDateString(date: string): string {
+  static getPostedAtDateString(date: string): string {
     return this._getDateDifference(moment.utc(date));
   }
 
-  _getDateDifference(date: moment): string {
+  static _getDateDifference(date: moment): string {
     const now = moment().utc();
     const days = now.diff(date, 'days');
     const hours = now.diff(date, 'hours');
@@ -25,4 +25,4 @@ class DateUtils {
   }
 }
 
-export default new DateUtils();
+export default DateUtils;

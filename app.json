@@ -2,7 +2,7 @@
   "expo": {
     "name": "RebelGamer",
     "icon": "./assets/tv.png",
-    "version": "3.0.0",
+    "version": "3.1.1",
     "privacy": "public",
     "slug": "mokkapps-rebelgamer",
     "sdkVersion": "23.0.0",

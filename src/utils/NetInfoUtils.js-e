@@ -3,7 +3,7 @@
 import { NetInfo, Platform } from 'react-native';
 
 class NetInfoUtils {
-  async hasInternetConnection(): Promise<boolean> {
+  static async hasInternetConnection(): Promise<boolean> {
     let isConnected: boolean = false;
 
     // Workaround until https://github.com/facebook/react-native/issues/8615 is fixed
@@ -22,4 +22,4 @@ class NetInfoUtils {
   }
 }
 
-export default new NetInfoUtils();
+export default NetInfoUtils;
