@@ -1,12 +1,12 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 
-import ArticleHeadline from './ArticleHeadline';
+import ArticleListItem from './ArticleListItem';
 
 it('renders correctly', () => {
   const tree = renderer
     .create(
-      <ArticleHeadline
+      <ArticleListItem
         article={{
           id: 124,
           title: { rendered: 'title' },

@@ -9,6 +9,7 @@
     "url": "https://www.mokkapps.de"
   },
   "private": false,
+  "license": "",
   "scripts": {
     "start": "react-native start",
     "preandroid": "rm -rf android/build",
