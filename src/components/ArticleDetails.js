@@ -13,10 +13,10 @@ import { Badge, Icon } from 'react-native-elements';
 import MyWebView from 'react-native-webview-autoheight';
 import React from 'react';
 
-import Constants from './../constants';
+import Constants from './../Constants';
 import HtmlDecoder from './../utils/HtmlDecoder';
-import Post from './../types';
-import Style from './../styles';
+import Post from './../Types';
+import Style from './../Styles';
 import Translate from './../utils/Translate';
 import ArticleDetailsHeader from './ArticleDetailsHeader';
 
@@ -37,7 +37,7 @@ type Props = {
 };
 
 type State = {
-  loading: boolean
+  isLoading: boolean
 };
 
 const styles = StyleSheet.create({
@@ -63,7 +63,6 @@ const styles = StyleSheet.create({
 });
 
 class ArticleDetails extends React.Component<Props, State> {
-
   static navigationOptions = ({ navigation }) => {
     const { params = {} } = navigation.state;
     const { article } = params;
@@ -86,9 +85,10 @@ class ArticleDetails extends React.Component<Props, State> {
 
   constructor(props: Props) {
     super(props);
-    this.setState({
-      loading: true
-    });
+
+    this.state = {
+      isLoading: true
+    };
   }
 
   componentDidMount() {
@@ -96,13 +96,13 @@ class ArticleDetails extends React.Component<Props, State> {
     this.props.navigation.setParams({ handleOpenInBrowser: this.openUrl });
   }
 
-  onLinkPress = (evt: any, href: string) => {
-    this.openUrl(href);
+  onLinkPress = async (evt: any, href: string) => {
+    await this.openUrl(href);
   };
 
-  onShouldStartLoadWithRequest = event => {
+  onShouldStartLoadWithRequest = async (event) => {
     if (Platform.OS === 'ios' && event.navigationType === 'click') {
-      Linking.openURL(event.url);
+      await this.openUrl(event.url);
       return false;
     } else if (Platform.OS === 'android') {
       const { article } = this.props.navigation.state.params;
@@ -110,29 +110,25 @@ class ArticleDetails extends React.Component<Props, State> {
         event.url !== article.link &&
         event.url !== 'file:///android_asset/'
       ) {
-        this.openUrl(event.url);
+        await this.openUrl(event.url);
       }
     }
 
     return true;
   };
 
-  openUrl = (url: string) => {
-    Linking.canOpenURL(url)
-      .then(supported => {
-        if (!supported) {
-          console.log(`Can't handle url: ${url}`);
-        } else {
-          Linking.openURL(url);
-        }
-      })
-      .catch(err => console.error('An error occurred', err));
+  openUrl = async (url: string): Promise<boolean> => {
+    const supported = await Linking.canOpenURL(url);
+    if (!supported) {
+      console.log(`Can't handle url: ${url}`);
+    }
+    return Promise.resolve(supported);
   };
 
   shareArticle = () => {
     const { params } = this.props.navigation.state;
     const { article } = params;
-    const appName: string = Translate.translate('appName');
+    const appName: string = Translate.translate('APP_NAME');
     Share.share(
       {
         message: `${HtmlDecoder.decodeHtml(article.title.rendered)} - ${article.link}`,
@@ -141,7 +137,7 @@ class ArticleDetails extends React.Component<Props, State> {
       },
       {
         // Android only:
-        dialogTitle: Translate.translate('shareDialogTitle')
+        dialogTitle: Translate.translate('SHARE_DIALOG_TITLE')
       }
     );
   };
@@ -157,7 +153,6 @@ class ArticleDetails extends React.Component<Props, State> {
         containerStyle={{ backgroundColor: Constants.RebelGamerRed }}
       />
     ));
-    const loadingView = <ActivityIndicator color={Constants.RebelGamerRed} size="large" />;
 
     return (
       <ScrollView>
@@ -172,13 +167,19 @@ class ArticleDetails extends React.Component<Props, State> {
             html: article.content.rendered + Style,
             baseUrl: Platform.OS === 'android' ? 'file:///android_asset/' : ''
           }}
+          onLoadStart={() => { this.state.isLoading = true; }}
+          onLoadEnd={() => { this.state.isLoading = false; }}
           startInLoadingState
-          renderLoading={loadingView}
+          renderLoading={() => <ActivityIndicator color={Constants.RebelGamerRed} size="large" />}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
           onNavigationStateChange={this.onShouldStartLoadWithRequest}
         />
-        <View style={styles.separator} />
-        <View style={styles.tagList}>{tags}</View>
+        {!this.state.isLoading &&
+          <View>
+            <View style={styles.separator} />
+            <View style={styles.tagList}>{tags}</View>
+          </View>
+        }
       </ScrollView>
     );
   }

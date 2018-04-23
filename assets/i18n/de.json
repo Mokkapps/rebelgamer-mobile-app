@@ -1,18 +1,19 @@
 {
-  "appName": "RebelGamer",
-  "allArticles": "Alle Artikel",
-  "placeHolderSearchBar": "Suche nach einem Artikel...",
-  "share": "Teilen",
-  "shareDialogTitle": "Teile diesen Artikel mit deinen Rebellen",
-  "alertTitle": "Es ist ein Fehler aufgetreten",
-  "alertMessage": "Fehler:",
-  "loadStoredArticles":
+  "APP_NAME": "RebelGamer",
+  "ALL_ARTICLES": "Alle Artikel",
+  "PLACEHOLDER_SEARCH_BAR": "Suche nach einem Artikel...",
+  "SHARE": "Teilen",
+  "SHARE_DIALOG_TITLE": "Teile diesen Artikel mit deinen Rebellen",
+  "ALERT_TITLE": "Es ist ein Fehler aufgetreten",
+  "ALERT_MESSAGE": "Fehler:",
+  "LOAD_STORED_ARTICLES":
     "Keine Internetverbindung, Aktualisierung nicht möglich. Zeige gespeicherte Artikel.",
-  "ok": "OK",
-  "version": "Version:",
-  "contactUs": "Kontaktiere uns",
-  "rateApp": "Bewerte die App",
-  "mailSubject": "RebelGamer App Feedback",
-  "description":
+  "OK": "OK",
+  "VERSION": "Version:",
+  "CONTACT_US": "Kontaktiere uns",
+  "RATE_APP": "Bewerte die App",
+  "MAIL_SUBJECT": "RebelGamer App Feedback",
+  "LOAD_MORE_ARTICLES": "Mehr Artikel laden",
+  "APP_DESCRIPTION":
     "Mit der RebelGamer App bist du immer auf dem aktuellsten Stand in Sachen Videospiele. Wir liefern dir aktuelle Nachrichten, Tests, Vorschauen, „etwas andere“ Reportagen, Interviews und Berichte zu den Themen Games und Digital Entertainment."
 }

@@ -1,4 +1,5 @@
 import DeviceDetector from './utils/DeviceDetector';
+import Constants from './Constants';
 
 const fontSizeParagraph = DeviceDetector.isTablet() ? 22 : 17;
 
@@ -37,15 +38,15 @@ const css = `
     }
 
     img {
-        display: block;
-        max-width:100%;
+      width: 100%;
+      height: ${Constants.HeadlineImageHeigth};
     }
 
     iframe {
         display: block;
-        max-width:100%;
-        margin-top:10px;
-        margin-bottom:10px;
+        max-width: 100%;
+        margin-top: 10px;
+        margin-bottom: 10px;
     }
 </style>
 `;
