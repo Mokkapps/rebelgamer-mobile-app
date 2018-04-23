@@ -1,12 +1,14 @@
 import React from 'react';
 import renderer from 'react-test-renderer';
 
-import ArticleListScreen from './ArticleListScreen';
+import ArticleList from './ArticleList';
 
 it('renders correctly', () => {
+  fetch.mockResponse(JSON.stringify([]));
   const navigation = { navigate: jest.fn() };
+
   const tree = renderer
-    .create(<ArticleListScreen navigation={navigation} />)
+    .create(<ArticleList navigation={navigation} />)
     .toJSON();
   expect(tree).toMatchSnapshot();
 });

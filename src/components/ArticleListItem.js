@@ -36,6 +36,8 @@ class ArticleListItem extends React.PureComponent<Props> {
     }
   };
 
+  getArticleImage = (article: Post) => article._embedded['wp:featuredmedia'][0].source_url;
+
   root: View | null;
 
   render() {
@@ -43,16 +45,9 @@ class ArticleListItem extends React.PureComponent<Props> {
     return (
       // eslint-disable-next-line no-return-assign
       <View ref={component => (this.root = component)} {...this.props}>
-        <Image
-          style={styles.image}
-          source={{ uri: article._embedded['wp:featuredmedia'][0].source_url }}
-        />
-        <Text style={styles.headline}>
-          {HtmlDecoder.decodeHtml(article.title.rendered)}
-        </Text>
-        <Text style={styles.date}>
-          {DateUtils.getPostedAtDateString(article.date)}
-        </Text>
+        <Image style={styles.image} source={{ uri: this.getArticleImage(article) }} />
+        <Text style={styles.headline}>{HtmlDecoder.decodeHtml(article.title.rendered)}</Text>
+        <Text style={styles.date}>{DateUtils.getPostedAtDateString(article.date)}</Text>
       </View>
     );
   }

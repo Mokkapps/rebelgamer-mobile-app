@@ -61,7 +61,9 @@ const styles = StyleSheet.create({
     marginRight: 10
   },
   toast: {
-    margin: 10,
+    marginLeft: 10,
+    marginRight: 10,
+    marginBottom: 30,
     backgroundColor: Constants.RebelGamerRed
   },
   loadMoreButton: {
@@ -75,7 +77,6 @@ class ArticleList extends React.Component<Props, State> {
 
     return {
       headerTitle: <HeaderImage />,
-      headerTitleStyle: { alignSelf: 'center', textAlign: 'center' },
       headerRight: (
         <Icon
           iconStyle={styles.headerRightButton}
@@ -107,6 +108,12 @@ class ArticleList extends React.Component<Props, State> {
     this.loadPosts();
   }
 
+  componentWillUnmount() {
+    if (this.postsSubscription) {
+      this.postsSubscription.unsubscribe();
+    }
+  }
+
   getStoredPosts = async (): Promise<Post[]> => {
     const storedPosts = await AsyncStorage.getItem(Constants.StorageKey);
     return Promise.resolve(storedPosts ? JSON.parse(storedPosts) : []);
@@ -131,7 +138,7 @@ class ArticleList extends React.Component<Props, State> {
   loadPosts = async (): void => {
     const hasInternetConnection = await NetInfoUtils.hasInternetConnection();
     if (!hasInternetConnection) {
-      const storedPosts = await this.loadStoredArticles();
+      const storedPosts = await this.getStoredArticles();
       if (storedPosts) {
         this.setState({
           posts: [...this.state.posts, ...storedPosts],
@@ -156,7 +163,6 @@ class ArticleList extends React.Component<Props, State> {
         this.handleFetchedPosts(posts);
       },
       error => {
-        console.error(error);
         this.setState({ isLoadingMoreArticles: false, isRefreshing: false });
         this.showAlert(error);
       }
@@ -198,6 +204,7 @@ class ArticleList extends React.Component<Props, State> {
       ],
       { cancelable: false }
     );
+    console.error(error);
   };
 
   handleRefresh = (): void => {
@@ -299,7 +306,8 @@ class ArticleList extends React.Component<Props, State> {
         <Toast
           ref="toast" // eslint-disable-line react/no-string-refs
           style={styles.toast}
-          positionValue={150}
+          textStyle={{ textAlign: 'center', color: 'white' }}
+          position="bottom"
         />
       </View>
     );

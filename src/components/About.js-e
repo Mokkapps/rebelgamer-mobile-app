@@ -83,13 +83,9 @@ class About extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <Image style={styles.image} source={tvImage} />
-        <Text h3 style={styles.appName}>
-          {Translate.translate('APP_NAME')}
-        </Text>
+        <Text h3 style={styles.appName}>{Translate.translate('APP_NAME')}</Text>
         <Text>{`${Translate.translate('VERSION')} ${version}`}</Text>
-        <Text style={styles.description}>
-          {Translate.translate('APP_DESCRIPTION')}
-        </Text>
+        <Text style={styles.description}>{Translate.translate('APP_DESCRIPTION')}</Text>
         <View style={styles.button}>
           <Button
             title={Translate.translate('CONTACT_US')}
