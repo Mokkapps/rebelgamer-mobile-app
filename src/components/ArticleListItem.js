@@ -2,14 +2,32 @@
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
-import Constants from './../constants';
+import Constants from './../Constants';
 import DateUtils from './../utils/DateUtils';
 import HtmlDecoder from './../utils/HtmlDecoder';
-import Post from './../types';
+import Post from './../Types';
 
 type Props = {
   article: Post
 };
+
+const styles = StyleSheet.create({
+  image: {
+    width: Dimensions.get('window').width,
+    height: Constants.HeadlineImageHeigth,
+    marginBottom: 5
+  },
+  headline: {
+    fontWeight: 'bold',
+    color: 'black',
+    fontSize: Constants.FontSizeHeadline,
+    marginHorizontal: 10
+  },
+  date: {
+    margin: 10,
+    fontSize: Constants.FontSizeListDate
+  }
+});
 
 class ArticleListItem extends React.PureComponent<Props> {
   setNativeProps = (nativeProps: Props) => {
@@ -40,28 +58,5 @@ class ArticleListItem extends React.PureComponent<Props> {
   }
 }
 
-const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    backgroundColor: '#fff',
-    alignItems: 'center',
-    justifyContent: 'center'
-  },
-  image: {
-    width: Dimensions.get('window').width,
-    height: Constants.HeadlineImageHeigth,
-    marginBottom: 5
-  },
-  headline: {
-    fontWeight: 'bold',
-    color: 'black',
-    fontSize: Constants.FontSizeHeadline,
-    marginHorizontal: 10
-  },
-  date: {
-    margin: 10,
-    fontSize: Constants.FontSizeListDate
-  }
-});
 
 export default ArticleListItem;

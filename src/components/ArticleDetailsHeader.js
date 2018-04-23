@@ -5,8 +5,8 @@ import React from 'react';
 import moment from 'moment';
 
 import HtmlDecoder from './../utils/HtmlDecoder';
-import Constants from './../constants';
-import Post from './../types';
+import Constants from './../Constants';
+import Post from './../Types';
 
 type Props = {
   article: Post
@@ -31,6 +31,11 @@ const styles = StyleSheet.create({
 });
 
 class ArticleDetailsHeader extends React.PureComponent<Props> {
+  getDateAndAuthor = (article: Post) =>
+    `${moment(article.date).format('DD.MM.YYYY, HH:mm')} | von ${article._embedded.author[0].name}`;
+
+  getArticleImage = (article: Post) => article._embedded['wp:featuredmedia'][0].source_url;
+
   render() {
     const { article } = this.props;
     return (
@@ -38,16 +43,14 @@ class ArticleDetailsHeader extends React.PureComponent<Props> {
         <Image
           style={styles.image}
           source={{
-            uri: article._embedded['wp:featuredmedia'][0].source_url
+            uri: this.getArticleImage(article)
           }}
         />,
         <Text style={styles.headline}>
           {HtmlDecoder.decodeHtml(article.title.rendered)}
         </Text>,
         <Text style={styles.author}>
-          {`${moment(article.date).format('DD.MM.YYYY, HH:mm')} | von ${
-            article._embedded.author[0].name
-            }`}
+          {this.getDateAndAuthor(article)}
         </Text>
       ]
     );

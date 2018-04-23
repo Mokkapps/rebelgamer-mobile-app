@@ -1,6 +1,6 @@
 {
   "name": "rebelgamer-mobile-app",
-  "version": "3.1.1",
+  "version": "3.0.2",
   "description": "Mobile app for the gaming blog \"RebelGamer\"",
   "homepage": "https://github.com/Mokkapps/rebelgamer-mobile-app",
   "author": {
@@ -32,8 +32,8 @@
   },
   "dependencies": {
     "babel-plugin-transform-remove-console": "^6.9.0",
+    "debounce": "^1.1.0",
     "html-entities": "^1.2.1",
-    "lodash": "^4.17.5",
     "moment": "^2.22.1",
     "react": "16.3.2",
     "react-native": "0.55.3",

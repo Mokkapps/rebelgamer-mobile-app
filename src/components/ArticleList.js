@@ -3,27 +3,27 @@
 import {
   ActivityIndicator,
   Alert,
+  Button,
   AsyncStorage,
   FlatList,
-  Platform,
   StyleSheet,
   TouchableHighlight,
   View
 } from 'react-native';
 import { Icon, SearchBar } from 'react-native-elements';
-import { debounce } from 'lodash';
 import React from 'react';
+import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
+import 'rxjs/add/observable/from';
 import Toast from 'react-native-easy-toast';
 import type { NavigationState } from 'react-navigation/src/TypeDefinition';
-import 'rxjs/add/observable/from';
-import { Observable } from 'rxjs/Observable';
+import debounce from 'debounce';
 
 import ArticleListItem from './../components/ArticleListItem';
-import Constants from './../constants';
+import Constants from './../Constants';
 import HeaderImage from './../components/HeaderImage';
 import NetInfoUtils from './../utils/NetInfoUtils';
-import Post from './../types';
+import Post from './../Types';
 import Translate from './../utils/Translate';
 
 type Props = {
@@ -31,50 +31,54 @@ type Props = {
 };
 
 type State = {
-  loading: boolean,
+  isLoadingMoreArticles: boolean,
   page: number,
-  data: Post[],
-  refreshing: boolean,
-  searchText: string
+  posts: Post[],
+  isRefreshing: boolean,
+  query: string
 };
 
 const WP_BASE_URL = 'https://www.rebelgamer.de/wp-json/wp/v2/';
 const POSTS_PER_PAGE = 5;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1
   },
   separator: {
     height: 1,
-    width: '86%',
     backgroundColor: '#CED0CE',
-    marginLeft: '14%'
+    marginLeft: 10,
+    marginRight: 10,
+    marginTop: 10,
   },
   footer: {
     paddingVertical: 20,
     borderTopWidth: 1,
     borderColor: '#CED0CE'
   },
-  headerImage: {
-    marginLeft: Platform.OS === 'android' ? 50 : 0,
-    marginTop: 5,
-    height: 40,
-    resizeMode: 'contain',
-    alignSelf: 'center'
+  headerRightButton: {
+    marginRight: 10
+  },
+  toast: {
+    margin: 10,
+    backgroundColor: Constants.RebelGamerRed
+  },
+  loadMoreButton: {
+    margin: 10
   }
 });
 
 class ArticleList extends React.Component<Props, State> {
-
   static navigationOptions = ({ navigation }) => {
     const { navigate } = navigation;
 
     return {
-      headerTitle: <HeaderImage style={styles.headerImage} />,
+      headerTitle: <HeaderImage />,
       headerTitleStyle: { alignSelf: 'center', textAlign: 'center' },
       headerRight: (
         <Icon
-          iconStyle={{ marginRight: 10 }}
+          iconStyle={styles.headerRightButton}
           name="info-outline"
           onPress={() => navigate('About')}
         />
@@ -86,13 +90,14 @@ class ArticleList extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      loading: true,
+      isLoadingMoreArticles: false,
       page: 1,
-      data: [],
-      refreshing: false,
-      searchText: ''
+      posts: [],
+      isRefreshing: true,
+      query: ''
     };
-    this.onSearchTextDelayed = debounce(
+
+    this.onSearchTextChange = debounce(
       this.handleSearchOnChange.bind(this),
       500
     );
@@ -102,20 +107,12 @@ class ArticleList extends React.Component<Props, State> {
     this.loadPosts();
   }
 
-  onSearchTextDelayed: Function;
-
-  async getStoredPosts(): Promise<Post[]> {
-    let storedPosts: string = '';
-    try {
-      storedPosts = await AsyncStorage.getItem(Constants.StorageKey);
-    } catch (error) {
-      console.error(error);
-    }
-
+  getStoredPosts = async (): Promise<Post[]> => {
+    const storedPosts = await AsyncStorage.getItem(Constants.StorageKey);
     return Promise.resolve(storedPosts ? JSON.parse(storedPosts) : []);
   }
 
-  getPost$(page: number, search: string): Observable<Post[]> {
+  getPost$ = (page: number, search: string): Observable<Post[]> => {
     const request = fetch(
       `${WP_BASE_URL}posts?_embed=true&page=${page}&per_page=${POSTS_PER_PAGE}&search=${search}`
     ).then(response => response.json());
@@ -123,25 +120,23 @@ class ArticleList extends React.Component<Props, State> {
     return Observable.from(request);
   }
 
-  getStoredArticles = async () => {
+  getStoredArticles = async (): Promise<Post[]> => {
     // eslint-disable-next-line react/no-string-refs
-    this.refs.toast.show(Translate.translate('loadStoredArticles'), 5000);
+    this.refs.toast.show(Translate.translate('LOAD_STORED_ARTICLES'), 5000);
     return this.getStoredPosts();
   }
 
   postsSubscription: Subscription;
 
-  loadPosts = async () => {
-    this.setState({ loading: true });
-
+  loadPosts = async (): void => {
     const hasInternetConnection = await NetInfoUtils.hasInternetConnection();
     if (!hasInternetConnection) {
       const storedPosts = await this.loadStoredArticles();
       if (storedPosts) {
         this.setState({
-          data: [...this.state.data, ...storedPosts],
-          loading: false,
-          refreshing: false
+          posts: [...this.state.posts, ...storedPosts],
+          isLoadingMoreArticles: false,
+          isRefreshing: false
         });
       }
       return;
@@ -155,48 +150,48 @@ class ArticleList extends React.Component<Props, State> {
     }
     this.postsSubscription = this.getPost$(
       page,
-      this.state.searchText
+      this.state.query
     ).subscribe(
       (posts: Post[]) => {
         this.handleFetchedPosts(posts);
       },
       error => {
         console.error(error);
-        this.setState({ loading: false, refreshing: false });
+        this.setState({ isLoadingMoreArticles: false, isRefreshing: false });
         this.showAlert(error);
       }
     );
   };
 
-  clearListIfNecessary = () => {
+  clearListIfNecessary = (): void => {
     if (
-      (this.state.searchText && this.state.page === 1) ||
-      this.state.refreshing
+      (this.state.query && this.state.page === 1) ||
+      this.state.isRefreshing
     ) {
-      this.setState({ data: [] });
+      this.setState({ posts: [] });
     }
   }
 
-  handleFetchedPosts = (posts: Post[]) => {
+  handleFetchedPosts = async (posts: Post[]): void => {
     this.setState({
-      data: [...this.state.data, ...posts],
-      loading: false,
-      refreshing: false
+      posts: [...this.state.posts, ...posts],
+      isLoadingMoreArticles: false,
+      isRefreshing: false
     });
 
-    AsyncStorage.setItem(
+    await AsyncStorage.setItem(
       Constants.StorageKey,
-      JSON.stringify(this.state.data)
+      JSON.stringify(this.state.posts)
     );
   }
 
-  showAlert = (error: string) => {
+  showAlert = (error: string): void => {
     Alert.alert(
-      Translate.translate('alertTitle'),
-      `${Translate.translate('alertMessage')} ${error}`,
+      Translate.translate('ALERT_TITLE'),
+      `${Translate.translate('ALERT_MESSAGE')} ${error}`,
       [
         {
-          text: Translate.translate('ok'),
+          text: Translate.translate('OK'),
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel'
         }
@@ -205,11 +200,12 @@ class ArticleList extends React.Component<Props, State> {
     );
   };
 
-  handleRefresh = () => {
+  handleRefresh = (): void => {
     this.setState(
       {
-        refreshing: true,
-        page: 1
+        page: 1,
+        isLoadingMoreArticles: false,
+        isRefreshing: true
       },
       () => {
         this.loadPosts();
@@ -217,10 +213,12 @@ class ArticleList extends React.Component<Props, State> {
     );
   };
 
-  handleLoadMore = () => {
+  loadMoreArticles = (): void => {
     this.setState(
       {
-        page: this.state.page + 1
+        page: this.state.page + 1,
+        isLoadingMoreArticles: true,
+        isRefreshing: false
       },
       () => {
         this.loadPosts();
@@ -228,23 +226,45 @@ class ArticleList extends React.Component<Props, State> {
     );
   };
 
-  handleSearchOnChange = (searchText: string) => {
-    this.setState({ searchText });
-    this.loadPosts();
+  handleSearchOnChange = (query: string): void => {
+    console.log('New search', query);
+    this.setState(
+      {
+        query: query || '',
+        isLoadingMoreArticles: false,
+        isRefreshing: true
+      },
+      () => {
+        this.loadPosts();
+      }
+    );
   };
-
-  renderSeparator = () => <View style={styles.separator} />;
 
   renderHeader = () => (
     <SearchBar
       lightTheme
-      onChangeText={this.onSearchTextDelayed}
-      placeholder={Translate.translate('placeHolderSearchBar')}
+      onChangeText={this.onSearchTextChange}
+      onClearText={this.onSearchTextChange}
+      placeholder={Translate.translate('PLACEHOLDER_SEARCH_BAR')}
+      clearIcon={{ color: '#86939e', name: 'clear' }}
+      value={this.state.query}
     />
   );
 
   renderFooter = () => {
-    if (!this.state.loading) return null;
+    if (!this.state.isLoadingMoreArticles && this.state.posts.length > 0) {
+      return (
+        <View>
+          <View style={styles.separator} />
+          <Button
+            style={styles.loadMoreButton}
+            title={Translate.translate('LOAD_MORE_ARTICLES')}
+            color={Constants.RebelGamerRed}
+            onPress={this.loadMoreArticles}
+          />
+        </View>
+      );
+    }
 
     return (
       <View style={styles.footer}>
@@ -259,32 +279,26 @@ class ArticleList extends React.Component<Props, State> {
 
   render() {
     const { navigate } = this.props.navigation;
-
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.state.data}
+          data={this.state.posts}
           renderItem={({ item }) => (
-            <TouchableHighlight
-              onPress={() => navigate('ArticleDetails', { article: item })}
-            >
+            <TouchableHighlight onPress={() => navigate('ArticleDetails', { article: item })}>
               <ArticleListItem article={item} />
             </TouchableHighlight>
           )}
-          keyExtractor={(item: Post) => item.id}
-          ItemSeparatorComponent={this.renderSeparator}
+          keyExtractor={(item: Post) => item.id.toString()}
           ListHeaderComponent={this.renderHeader}
           // Necessary to show footer on Android
           // eslint-disable-next-line react/jsx-no-bind
           ListFooterComponent={this.renderFooter.bind(this)}
-          refreshing={this.state.refreshing}
+          refreshing={this.state.isRefreshing}
           onRefresh={this.handleRefresh}
-          onEndReached={this.handleLoadMore}
-          onEndReachedThreshold={0.5}
         />
         <Toast
           ref="toast" // eslint-disable-line react/no-string-refs
-          style={{ backgroundColor: Constants.RebelGamerRed }}
+          style={styles.toast}
           positionValue={150}
         />
       </View>

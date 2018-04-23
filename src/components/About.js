@@ -13,7 +13,7 @@ import { Text } from 'react-native-elements';
 import email from 'react-native-email';
 
 import { version } from './../../package.json';
-import Constants from './../constants';
+import Constants from './../Constants';
 import DeviceDetector from './../utils/DeviceDetector';
 import Translate from './../utils/Translate';
 
@@ -67,13 +67,13 @@ class About extends React.Component<Props, State> {
     }).catch(console.error);
   };
 
-  onPressRate = () => {
+  onPressRate = async () => {
     if (Platform.OS === 'ios') {
-      Linking.openURL(
+      await Linking.openURL(
         `itms-apps://itunes.apple.com/app/id${Constants.AppleAppID}`
       );
     } else {
-      Linking.openURL(
+      await Linking.openURL(
         `http://play.google.com/store/apps/details?id=${Constants.GooglePackageName}`
       );
     }
@@ -84,22 +84,22 @@ class About extends React.Component<Props, State> {
       <View style={styles.container}>
         <Image style={styles.image} source={tvImage} />
         <Text h3 style={styles.appName}>
-          {Translate.translate('appName')}
+          {Translate.translate('APP_NAME')}
         </Text>
-        <Text>{`${Translate.translate('version')} ${version}`}</Text>
+        <Text>{`${Translate.translate('VERSION')} ${version}`}</Text>
         <Text style={styles.description}>
-          {Translate.translate('description')}
+          {Translate.translate('APP_DESCRIPTION')}
         </Text>
         <View style={styles.button}>
           <Button
-            title={Translate.translate('contactUs')}
+            title={Translate.translate('CONTACT_US')}
             color={Constants.RebelGamerRed}
             onPress={this.onPressContact}
           />
         </View>
         <View style={styles.button}>
           <Button
-            title={Translate.translate('rateApp')}
+            title={Translate.translate('RATE_APP')}
             color={Constants.RebelGamerRed}
             onPress={this.onPressRate}
           />
