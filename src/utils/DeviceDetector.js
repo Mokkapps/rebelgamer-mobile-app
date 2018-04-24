@@ -16,15 +16,9 @@ class DeviceDetector {
   }
 
   isTablet() {
-    if (
-      this.pixelDensity < 2 &&
-      (this.adjustedWidth >= 1000 || this.adjustedHeight >= 1000)
-    ) {
+    if (this.pixelDensity < 2 && (this.adjustedWidth >= 1000 || this.adjustedHeight >= 1000)) {
       return true;
-    } else if (
-      this.pixelDensity === 2 &&
-      (this.adjustedWidth >= 1920 || this.adjustedHeight >= 1920)
-    ) {
+    } else if (this.pixelDensity === 2 && (this.adjustedWidth >= 1920 || this.adjustedHeight >= 1920)) {
       return true;
     }
 

@@ -1,8 +1,8 @@
 import { StackNavigator } from 'react-navigation';
 
-import ArticleList from './src/components/ArticleList';
-import ArticleDetails from './src/components/ArticleDetails';
-import About from './src/components/About';
+import ArticleList from './components/ArticleList';
+import ArticleDetails from './components/ArticleDetails';
+import About from './components/About';
 
 const App = StackNavigator({
   ArticleList: { screen: ArticleList },

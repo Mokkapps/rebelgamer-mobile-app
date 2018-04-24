@@ -2,10 +2,10 @@
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import React from 'react';
 
-import Constants from './../Constants';
-import DateUtils from './../utils/DateUtils';
-import HtmlDecoder from './../utils/HtmlDecoder';
-import Post from './../Types';
+import Post from './../types';
+import { HEADLINE_IMAGE_HEIGHT, FONT_SIZE_HEADLINE, FONT_SIZE_LIST_DATE } from '../constants';
+import getPostedAtDateString from '../utils/date-utils';
+import decodeHtml from '../utils/html-decoder';
 
 type Props = {
   article: Post
@@ -14,18 +14,18 @@ type Props = {
 const styles = StyleSheet.create({
   image: {
     width: Dimensions.get('window').width,
-    height: Constants.HeadlineImageHeigth,
+    height: HEADLINE_IMAGE_HEIGHT,
     marginBottom: 5
   },
   headline: {
     fontWeight: 'bold',
     color: 'black',
-    fontSize: Constants.FontSizeHeadline,
+    fontSize: FONT_SIZE_HEADLINE,
     marginHorizontal: 10
   },
   date: {
     margin: 10,
-    fontSize: Constants.FontSizeListDate
+    fontSize: FONT_SIZE_LIST_DATE
   }
 });
 
@@ -46,12 +46,11 @@ class ArticleListItem extends React.PureComponent<Props> {
       // eslint-disable-next-line no-return-assign
       <View ref={component => (this.root = component)} {...this.props}>
         <Image style={styles.image} source={{ uri: this.getArticleImage(article) }} />
-        <Text style={styles.headline}>{HtmlDecoder.decodeHtml(article.title.rendered)}</Text>
-        <Text style={styles.date}>{DateUtils.getPostedAtDateString(article.date)}</Text>
+        <Text style={styles.headline}>{decodeHtml(article.title.rendered)}</Text>
+        <Text style={styles.date}>{getPostedAtDateString(article.date)}</Text>
       </View>
     );
   }
 }
-
 
 export default ArticleListItem;
