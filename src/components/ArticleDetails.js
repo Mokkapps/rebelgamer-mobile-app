@@ -1,6 +1,15 @@
 // @flow
 
-import { ActivityIndicator, Linking, Platform, ScrollView, Share, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Linking,
+  Platform,
+  ScrollView,
+  Share,
+  StyleSheet,
+  TouchableHighlight,
+  View
+} from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import MyWebView from 'react-native-webview-autoheight';
 import React from 'react';
@@ -128,7 +137,8 @@ class ArticleDetails extends React.Component<Props, State> {
     if (!supported) {
       console.log(`Can't handle url: ${url}`);
     }
-    return Promise.resolve(supported);
+    const opened = await Linking.openURL(url);
+    return Promise.resolve(opened);
   };
 
   render() {

@@ -160,7 +160,7 @@ class ArticleList extends React.Component<Props, State> {
 
   clearListIfNecessary = (): void => {
     if ((this.state.query && this.state.page === 1) || this.state.isRefreshing) {
-      this.setState({ posts: [] });
+      this.setState({ posts: [], page: 1 });
     }
   };
 

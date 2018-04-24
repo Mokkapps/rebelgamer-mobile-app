@@ -53,7 +53,7 @@ class About extends React.Component<Props, State> {
   onPressContact = () => {
     const os = Platform.OS === 'ios' ? 'iOS' : 'Android';
     const to = [MOKKAPPS_MAIL, REBELGAMER_MAIL];
-    email(to, { subject: `${translate('mailSubject')} (Version: ${version}, OS: ${os})` }).catch(console.error);
+    email(to, { subject: `${translate('MAIL_SUBJECT')} (Version: ${version}, OS: ${os})` }).catch(console.error);
   };
 
   onPressRate = async () => {
