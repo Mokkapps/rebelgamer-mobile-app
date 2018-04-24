@@ -6,7 +6,7 @@ import MyWebView from 'react-native-webview-autoheight';
 import React from 'react';
 
 import ArticleDetailsHeader from './ArticleDetailsHeader';
-import Post from './../types';
+import Post from './../wp-types';
 import Style from './../styles';
 import translate from './../utils/translate';
 import { REBELGAMER_RED } from '../constants';
@@ -22,7 +22,7 @@ type Props = {
     },
     state: {
       params: {
-        article: Post
+        article: typeof Post
       }
     }
   }
@@ -88,7 +88,7 @@ class ArticleDetails extends React.Component<Props, State> {
     await this.openUrl(href);
   };
 
-  onShouldStartLoadWithRequest = async event => {
+  onShouldStartLoadWithRequest = async (event): boolean => {
     if (Platform.OS === 'ios' && event.navigationType === 'click') {
       await this.openUrl(event.url);
       return false;
@@ -102,12 +102,8 @@ class ArticleDetails extends React.Component<Props, State> {
     return true;
   };
 
-  openUrl = async (url: string): Promise<boolean> => {
-    const supported = await Linking.canOpenURL(url);
-    if (!supported) {
-      console.log(`Can't handle url: ${url}`);
-    }
-    return Promise.resolve(supported);
+  stopLoading = () => {
+    this.setState({ isLoading: false });
   };
 
   shareArticle = () => {
@@ -125,6 +121,14 @@ class ArticleDetails extends React.Component<Props, State> {
         dialogTitle: translate('SHARE_DIALOG_TITLE')
       }
     );
+  };
+
+  openUrl = async (url: string): Promise<boolean> => {
+    const supported = await Linking.canOpenURL(url);
+    if (!supported) {
+      console.log(`Can't handle url: ${url}`);
+    }
+    return Promise.resolve(supported);
   };
 
   render() {
@@ -152,12 +156,7 @@ class ArticleDetails extends React.Component<Props, State> {
             html: article.content.rendered + Style,
             baseUrl: Platform.OS === 'android' ? 'file:///android_asset/' : ''
           }}
-          onLoadStart={() => {
-            this.state.isLoading = true;
-          }}
-          onLoadEnd={() => {
-            this.state.isLoading = false;
-          }}
+          onLoadEnd={this.stopLoading}
           startInLoadingState
           renderLoading={() => <ActivityIndicator color={REBELGAMER_RED} size="large" />}
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
