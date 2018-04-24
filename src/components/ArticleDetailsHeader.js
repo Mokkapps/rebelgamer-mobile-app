@@ -4,12 +4,12 @@ import { Image, StyleSheet, Text } from 'react-native';
 import React from 'react';
 import moment from 'moment';
 
-import Post from './../types';
+import Post from './../wp-types';
 import { FONT_SIZE_DETAILS_DATE, HEADLINE_IMAGE_HEIGHT, FONT_SIZE_HEADLINE } from '../constants';
 import decodeHtml from '../utils/html-decoder';
 
 type Props = {
-  article: Post
+  article: typeof Post
 };
 
 const styles = StyleSheet.create({
@@ -31,10 +31,10 @@ const styles = StyleSheet.create({
 });
 
 class ArticleDetailsHeader extends React.PureComponent<Props> {
-  getDateAndAuthor = (article: Post) =>
+  getDateAndAuthor = (article: typeof Post) =>
     `${moment(article.date).format('DD.MM.YYYY, HH:mm')} | von ${article._embedded.author[0].name}`;
 
-  getArticleImage = (article: Post) => article._embedded['wp:featuredmedia'][0].source_url;
+  getArticleImage = (article: typeof Post) => article._embedded['wp:featuredmedia'][0].source_url;
 
   render() {
     const { article } = this.props;

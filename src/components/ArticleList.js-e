@@ -16,13 +16,13 @@ import { Observable } from 'rxjs/Observable';
 import { Subscription } from 'rxjs/Subscription';
 import 'rxjs/add/observable/from';
 import Toast from 'react-native-easy-toast';
-import type { NavigationState } from 'react-navigation/src/TypeDefinition';
 import debounce from 'debounce';
+import { NavigationState } from 'react-navigation';
 
 import ArticleListItem from './../components/ArticleListItem';
 import HeaderImage from './../components/HeaderImage';
 import hasInternetConnection from '../utils/connection-checker';
-import Post from './../types';
+import Post from './../wp-types';
 import { REBELGAMER_RED, STORAGE_KEY } from '../constants';
 import translate from '../utils/translate';
 
@@ -33,7 +33,7 @@ type Props = {
 type State = {
   isLoadingMoreArticles: boolean,
   page: number,
-  posts: Post[],
+  posts: typeof Post[],
   isRefreshing: boolean,
   query: string
 };
@@ -105,12 +105,12 @@ class ArticleList extends React.Component<Props, State> {
     }
   }
 
-  getStoredPosts = async (): Promise<Post[]> => {
+  getStoredPosts = async (): Promise<typeof Post[]> => {
     const storedPosts = await AsyncStorage.getItem(STORAGE_KEY);
     return Promise.resolve(storedPosts ? JSON.parse(storedPosts) : []);
   };
 
-  getPost$ = (page: number, search: string): Observable<Post[]> => {
+  getPost$ = (page: number, search: string): Observable<typeof Post[]> => {
     const request = fetch(
       `${WP_BASE_URL}posts?_embed=true&page=${page}&per_page=${POSTS_PER_PAGE}&search=${search}`
     ).then(response => response.json());
@@ -118,7 +118,7 @@ class ArticleList extends React.Component<Props, State> {
     return Observable.from(request);
   };
 
-  getStoredArticles = async (): Promise<Post[]> => {
+  getStoredArticles = async (): Promise<typeof Post[]> => {
     // eslint-disable-next-line react/no-string-refs
     this.refs.toast.show(translate('LOAD_STORED_ARTICLES'), 5000);
     return this.getStoredPosts();
@@ -136,7 +136,7 @@ class ArticleList extends React.Component<Props, State> {
           isRefreshing: false
         });
       }
-      return;
+      return Promise.resolve();
     }
 
     const { page } = this.state;
@@ -146,7 +146,7 @@ class ArticleList extends React.Component<Props, State> {
       this.postsSubscription.unsubscribe();
     }
     this.postsSubscription = this.getPost$(page, this.state.query).subscribe(
-      (posts: Post[]) => {
+      (posts: typeof Post[]) => {
         this.handleFetchedPosts(posts);
       },
       error => {
@@ -154,6 +154,8 @@ class ArticleList extends React.Component<Props, State> {
         this.showAlert(error);
       }
     );
+
+    return Promise.resolve();
   };
 
   clearListIfNecessary = (): void => {
@@ -162,7 +164,7 @@ class ArticleList extends React.Component<Props, State> {
     }
   };
 
-  handleFetchedPosts = async (posts: Post[]): void => {
+  handleFetchedPosts = async (posts: typeof Post[]): void => {
     this.setState({
       posts: [...this.state.posts, ...posts],
       isLoadingMoreArticles: false,
@@ -188,7 +190,7 @@ class ArticleList extends React.Component<Props, State> {
     console.error(error);
   };
 
-  handleRefresh = (): void => {
+  handleRefresh = async (): void => {
     this.setState(
       {
         page: 1,
@@ -215,7 +217,6 @@ class ArticleList extends React.Component<Props, State> {
   };
 
   handleSearchOnChange = (query: string): void => {
-    console.log('New search', query);
     this.setState(
       {
         query: query || '',
@@ -229,14 +230,7 @@ class ArticleList extends React.Component<Props, State> {
   };
 
   renderHeader = () => (
-    <SearchBar
-      lightTheme
-      onChangeText={this.onSearchTextChange}
-      onClearText={this.onSearchTextChange}
-      placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
-      clearIcon={{ color: '#86939e', name: 'clear' }}
-      value={this.state.query}
-    />
+    <SearchBar lightTheme onChangeText={this.onSearchTextChange} placeholder={translate('PLACEHOLDER_SEARCH_BAR')} />
   );
 
   renderFooter = () => {
@@ -252,6 +246,10 @@ class ArticleList extends React.Component<Props, State> {
           />
         </View>
       );
+    }
+
+    if (this.state.isRefreshing) {
+      return null;
     }
 
     return (

@@ -24,6 +24,7 @@
 
 ; Ignore metro
 .*/node_modules/metro/.*
+.*/node_modules/.*
 
 [include]
 
@@ -51,7 +52,5 @@ suppress_comment=\\(.\\|\n\\)*\\$FlowIssue\\((\\(<VERSION>\\)? *\\(site=[a-z,_]*
 suppress_comment=\\(.\\|\n\\)*\\$FlowFixedInNextDeploy
 suppress_comment=\\(.\\|\n\\)*\\$FlowExpectedError
 
-unsafe.enable_getters_and_setters=true
-
 [version]
-^0.56.0
+^0.69.0
