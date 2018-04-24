@@ -1,5 +1,5 @@
 import DeviceDetector from './utils/DeviceDetector';
-import Constants from './Constants';
+import { HEADLINE_IMAGE_HEIGHT } from './constants';
 
 const fontSizeParagraph = DeviceDetector.isTablet() ? 22 : 17;
 
@@ -39,7 +39,7 @@ const css = `
 
     img {
       width: 100%;
-      height: ${Constants.HeadlineImageHeigth};
+      height: ${HEADLINE_IMAGE_HEIGHT};
     }
 
     iframe {

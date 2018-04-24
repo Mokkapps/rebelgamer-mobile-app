@@ -4,9 +4,9 @@ import { Image, StyleSheet, Text } from 'react-native';
 import React from 'react';
 import moment from 'moment';
 
-import HtmlDecoder from './../utils/HtmlDecoder';
-import Constants from './../Constants';
-import Post from './../Types';
+import Post from './../types';
+import { FONT_SIZE_DETAILS_DATE, HEADLINE_IMAGE_HEIGHT, FONT_SIZE_HEADLINE } from '../constants';
+import decodeHtml from '../utils/html-decoder';
 
 type Props = {
   article: Post
@@ -14,18 +14,18 @@ type Props = {
 
 const styles = StyleSheet.create({
   author: {
-    fontSize: Constants.FontSizeDetailsDate,
+    fontSize: FONT_SIZE_DETAILS_DATE,
     textAlign: 'center',
     margin: 5
   },
   image: {
-    height: Constants.HeadlineImageHeigth
+    height: HEADLINE_IMAGE_HEIGHT
   },
   headline: {
     textAlign: 'center',
     fontWeight: 'bold',
     color: 'black',
-    fontSize: Constants.FontSizeHeadline,
+    fontSize: FONT_SIZE_HEADLINE,
     margin: 5
   }
 });
@@ -38,13 +38,11 @@ class ArticleDetailsHeader extends React.PureComponent<Props> {
 
   render() {
     const { article } = this.props;
-    return (
-      [
-        <Image style={styles.image} source={{ uri: this.getArticleImage(article) }} />,
-        <Text style={styles.headline}>{HtmlDecoder.decodeHtml(article.title.rendered)}</Text>,
-        <Text style={styles.author}>{this.getDateAndAuthor(article)}</Text>
-      ]
-    );
+    return [
+      <Image style={styles.image} source={{ uri: this.getArticleImage(article) }} />,
+      <Text style={styles.headline}>{decodeHtml(article.title.rendered)}</Text>,
+      <Text style={styles.author}>{this.getDateAndAuthor(article)}</Text>
+    ];
   }
 }
 

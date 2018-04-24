@@ -20,11 +20,11 @@ import type { NavigationState } from 'react-navigation/src/TypeDefinition';
 import debounce from 'debounce';
 
 import ArticleListItem from './../components/ArticleListItem';
-import Constants from './../Constants';
 import HeaderImage from './../components/HeaderImage';
-import NetInfoUtils from './../utils/NetInfoUtils';
-import Post from './../Types';
-import Translate from './../utils/Translate';
+import hasInternetConnection from '../utils/connection-checker';
+import Post from './../types';
+import { REBELGAMER_RED, STORAGE_KEY } from '../constants';
+import translate from '../utils/translate';
 
 type Props = {
   navigation: NavigationState
@@ -50,7 +50,7 @@ const styles = StyleSheet.create({
     backgroundColor: '#CED0CE',
     marginLeft: 10,
     marginRight: 10,
-    marginTop: 10,
+    marginTop: 10
   },
   footer: {
     paddingVertical: 20,
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
     marginLeft: 10,
     marginRight: 10,
     marginBottom: 30,
-    backgroundColor: Constants.RebelGamerRed
+    backgroundColor: REBELGAMER_RED
   },
   loadMoreButton: {
     margin: 10
@@ -77,13 +77,7 @@ class ArticleList extends React.Component<Props, State> {
 
     return {
       headerTitle: <HeaderImage />,
-      headerRight: (
-        <Icon
-          iconStyle={styles.headerRightButton}
-          name="info-outline"
-          onPress={() => navigate('About')}
-        />
-      )
+      headerRight: <Icon iconStyle={styles.headerRightButton} name="info-outline" onPress={() => navigate('About')} />
     };
   };
 
@@ -98,10 +92,7 @@ class ArticleList extends React.Component<Props, State> {
       query: ''
     };
 
-    this.onSearchTextChange = debounce(
-      this.handleSearchOnChange.bind(this),
-      500
-    );
+    this.onSearchTextChange = debounce(this.handleSearchOnChange.bind(this), 500);
   }
 
   componentDidMount() {
@@ -115,9 +106,9 @@ class ArticleList extends React.Component<Props, State> {
   }
 
   getStoredPosts = async (): Promise<Post[]> => {
-    const storedPosts = await AsyncStorage.getItem(Constants.StorageKey);
+    const storedPosts = await AsyncStorage.getItem(STORAGE_KEY);
     return Promise.resolve(storedPosts ? JSON.parse(storedPosts) : []);
-  }
+  };
 
   getPost$ = (page: number, search: string): Observable<Post[]> => {
     const request = fetch(
@@ -125,19 +116,18 @@ class ArticleList extends React.Component<Props, State> {
     ).then(response => response.json());
 
     return Observable.from(request);
-  }
+  };
 
   getStoredArticles = async (): Promise<Post[]> => {
     // eslint-disable-next-line react/no-string-refs
-    this.refs.toast.show(Translate.translate('LOAD_STORED_ARTICLES'), 5000);
+    this.refs.toast.show(translate('LOAD_STORED_ARTICLES'), 5000);
     return this.getStoredPosts();
-  }
+  };
 
   postsSubscription: Subscription;
 
   loadPosts = async (): void => {
-    const hasInternetConnection = await NetInfoUtils.hasInternetConnection();
-    if (!hasInternetConnection) {
+    if (!(await hasInternetConnection())) {
       const storedPosts = await this.getStoredArticles();
       if (storedPosts) {
         this.setState({
@@ -155,10 +145,7 @@ class ArticleList extends React.Component<Props, State> {
     if (this.postsSubscription) {
       this.postsSubscription.unsubscribe();
     }
-    this.postsSubscription = this.getPost$(
-      page,
-      this.state.query
-    ).subscribe(
+    this.postsSubscription = this.getPost$(page, this.state.query).subscribe(
       (posts: Post[]) => {
         this.handleFetchedPosts(posts);
       },
@@ -170,13 +157,10 @@ class ArticleList extends React.Component<Props, State> {
   };
 
   clearListIfNecessary = (): void => {
-    if (
-      (this.state.query && this.state.page === 1) ||
-      this.state.isRefreshing
-    ) {
+    if ((this.state.query && this.state.page === 1) || this.state.isRefreshing) {
       this.setState({ posts: [] });
     }
-  }
+  };
 
   handleFetchedPosts = async (posts: Post[]): void => {
     this.setState({
@@ -185,19 +169,16 @@ class ArticleList extends React.Component<Props, State> {
       isRefreshing: false
     });
 
-    await AsyncStorage.setItem(
-      Constants.StorageKey,
-      JSON.stringify(this.state.posts)
-    );
-  }
+    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.posts));
+  };
 
   showAlert = (error: string): void => {
     Alert.alert(
-      Translate.translate('ALERT_TITLE'),
-      `${Translate.translate('ALERT_MESSAGE')} ${error}`,
+      translate('ALERT_TITLE'),
+      `${translate('ALERT_MESSAGE')} ${error}`,
       [
         {
-          text: Translate.translate('OK'),
+          text: translate('OK'),
           onPress: () => console.log('Cancel Pressed'),
           style: 'cancel'
         }
@@ -252,7 +233,7 @@ class ArticleList extends React.Component<Props, State> {
       lightTheme
       onChangeText={this.onSearchTextChange}
       onClearText={this.onSearchTextChange}
-      placeholder={Translate.translate('PLACEHOLDER_SEARCH_BAR')}
+      placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
       clearIcon={{ color: '#86939e', name: 'clear' }}
       value={this.state.query}
     />
@@ -265,8 +246,8 @@ class ArticleList extends React.Component<Props, State> {
           <View style={styles.separator} />
           <Button
             style={styles.loadMoreButton}
-            title={Translate.translate('LOAD_MORE_ARTICLES')}
-            color={Constants.RebelGamerRed}
+            title={translate('LOAD_MORE_ARTICLES')}
+            color={REBELGAMER_RED}
             onPress={this.loadMoreArticles}
           />
         </View>
@@ -275,11 +256,7 @@ class ArticleList extends React.Component<Props, State> {
 
     return (
       <View style={styles.footer}>
-        <ActivityIndicator
-          color={Constants.RebelGamerRed}
-          animating
-          size="large"
-        />
+        <ActivityIndicator color={REBELGAMER_RED} animating size="large" />
       </View>
     );
   };

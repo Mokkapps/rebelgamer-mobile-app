@@ -9,7 +9,7 @@
     "url": "https://www.mokkapps.de"
   },
   "private": false,
-  "license": "",
+  "license": "MIT",
   "scripts": {
     "start": "react-native start",
     "preandroid": "rm -rf android/build",
@@ -36,7 +36,7 @@
     "debounce": "^1.1.0",
     "html-entities": "^1.2.1",
     "moment": "^2.22.1",
-    "react": "16.3.2",
+    "react": "16.3.1",
     "react-native": "0.55.3",
     "react-native-easy-toast": "1.1.0",
     "react-native-elements": "^0.19.1",
