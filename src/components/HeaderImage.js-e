@@ -5,9 +5,6 @@ import React from 'react';
 
 const headerImage = require('../../assets/header.png');
 
-type Props = {};
-type State = {};
-
 const styles = StyleSheet.create({
   headerImage: {
     flex: 1,
@@ -18,10 +15,6 @@ const styles = StyleSheet.create({
   }
 });
 
-class HeaderImage extends React.Component<Props, State> {
-  render() {
-    return <Image style={styles.headerImage} source={headerImage} />;
-  }
-}
+const HeaderImage = () => <Image style={styles.headerImage} source={headerImage} />;
 
 export default HeaderImage;

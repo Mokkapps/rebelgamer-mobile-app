@@ -72,7 +72,6 @@ exports[`renders correctly 1`] = `
           <TextInput
             allowFontScaling={true}
             onChangeText={[Function]}
-            onClearText={[Function]}
             placeholder="Suche nach einem Artikel..."
             placeholderTextColor="#86939e"
             style={
@@ -94,14 +93,11 @@ exports[`renders correctly 1`] = `
                 false,
                 false,
                 undefined,
+                undefined,
                 false,
-                Object {
-                  "paddingRight": 30,
-                },
               ]
             }
             underlineColorAndroid="transparent"
-            value=""
           />
           <Text
             accessible={true}
@@ -134,61 +130,12 @@ exports[`renders correctly 1`] = `
           >
             
           </Text>
-          <Text
-            accessible={true}
-            allowFontScaling={false}
-            ellipsizeMode="tail"
-            onPress={[Function]}
-            style={
-              Array [
-                Object {
-                  "color": "#86939e",
-                  "fontSize": 16,
-                },
-                Array [
-                  Object {
-                    "backgroundColor": "transparent",
-                    "position": "absolute",
-                    "top": 15.5,
-                  },
-                  Object {
-                    "right": 16,
-                  },
-                  undefined,
-                ],
-                Object {
-                  "fontFamily": "Material Icons",
-                  "fontStyle": "normal",
-                  "fontWeight": "normal",
-                },
-              ]
-            }
-          >
-            
-          </Text>
         </View>
       </View>
       <View
         onLayout={[Function]}
         style={null}
-      >
-        <View
-          style={
-            Object {
-              "borderColor": "#CED0CE",
-              "borderTopWidth": 1,
-              "paddingVertical": 20,
-            }
-          }
-        >
-          <ActivityIndicator
-            animating={true}
-            color="#F44336"
-            hidesWhenStopped={true}
-            size="large"
-          />
-        </View>
-      </View>
+      />
     </View>
   </RCTScrollView>
 </View>
