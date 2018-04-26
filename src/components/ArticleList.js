@@ -12,9 +12,6 @@ import {
 } from 'react-native';
 import { Icon, SearchBar } from 'react-native-elements';
 import React from 'react';
-import { Observable } from 'rxjs/Observable';
-import { Subscription } from 'rxjs/Subscription';
-import 'rxjs/add/observable/from';
 import Toast from 'react-native-easy-toast';
 import debounce from 'debounce';
 import { NavigationState } from 'react-navigation';
@@ -25,6 +22,7 @@ import hasInternetConnection from '../utils/connection-checker';
 import Post from './../wp-types';
 import { REBELGAMER_RED, STORAGE_KEY } from '../constants';
 import translate from '../utils/translate';
+import fetchPosts from '../utils/wp-connector';
 
 type Props = {
   navigation: NavigationState
@@ -37,9 +35,6 @@ type State = {
   isRefreshing: boolean,
   query: string
 };
-
-const WP_BASE_URL = 'https://www.rebelgamer.de/wp-json/wp/v2/';
-const POSTS_PER_PAGE = 5;
 
 const styles = StyleSheet.create({
   container: {
@@ -95,27 +90,13 @@ class ArticleList extends React.Component<Props, State> {
     this.onSearchTextChange = debounce(this.handleSearchOnChange.bind(this), 500);
   }
 
-  componentDidMount() {
-    this.loadPosts();
-  }
-
-  componentWillUnmount() {
-    if (this.postsSubscription) {
-      this.postsSubscription.unsubscribe();
-    }
+  async componentDidMount() {
+    await this.loadPosts();
   }
 
   getStoredPosts = async (): Promise<typeof Post[]> => {
     const storedPosts = await AsyncStorage.getItem(STORAGE_KEY);
     return Promise.resolve(storedPosts ? JSON.parse(storedPosts) : []);
-  };
-
-  getPost$ = (page: number, search: string): Observable<typeof Post[]> => {
-    const request = fetch(
-      `${WP_BASE_URL}posts?_embed=true&page=${page}&per_page=${POSTS_PER_PAGE}&search=${search}`
-    ).then(response => response.json());
-
-    return Observable.from(request);
   };
 
   getStoredArticles = async (): Promise<typeof Post[]> => {
@@ -124,54 +105,58 @@ class ArticleList extends React.Component<Props, State> {
     return this.getStoredPosts();
   };
 
-  postsSubscription: Subscription;
-
-  loadPosts = async (): void => {
-    if (!(await hasInternetConnection())) {
-      const storedPosts = await this.getStoredArticles();
-      if (storedPosts) {
-        this.setState({
-          posts: [...this.state.posts, ...storedPosts],
-          isLoadingMoreArticles: false,
-          isRefreshing: false
-        });
-      }
-      return Promise.resolve();
-    }
-
-    const { page } = this.state;
-    this.clearListIfNecessary();
-
-    if (this.postsSubscription) {
-      this.postsSubscription.unsubscribe();
-    }
-    this.postsSubscription = this.getPost$(page, this.state.query).subscribe(
-      (posts: typeof Post[]) => {
-        this.handleFetchedPosts(posts);
+  loadPosts = (
+    page: number = 1,
+    isLoadingMoreArticles: boolean = false,
+    isRefreshing: boolean = true,
+    query: string = ''
+  ) => {
+    this.setState(
+      {
+        page,
+        isLoadingMoreArticles,
+        isRefreshing,
+        query
       },
-      error => {
-        this.setState({ isLoadingMoreArticles: false, isRefreshing: false });
-        this.showAlert(error);
+      () => {
+        this._fetchPosts()
+          .then(posts => this.handleFetchedPosts(posts))
+          .catch(err => this.showAlert(err));
       }
     );
-
-    return Promise.resolve();
   };
 
-  clearListIfNecessary = (): void => {
-    if ((this.state.query && this.state.page === 1) || this.state.isRefreshing) {
+  _fetchPosts = async (): Promise<Post[]> => {
+    const hasConnection = await hasInternetConnection();
+    if (!hasConnection) {
+      const storedPosts = await this.getStoredArticles();
+      return Promise.resolve(storedPosts);
+    }
+
+    const { query, page, isRefreshing } = this.state;
+
+    // Clear list if necessary
+    if ((query && page === 1) || isRefreshing) {
       this.setState({ posts: [], page: 1 });
     }
+
+    return fetchPosts(page, query);
   };
 
-  handleFetchedPosts = async (posts: typeof Post[]): void => {
+  removeDuplicates = (myArr, prop) =>
+    myArr.filter((obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos);
+
+  handleFetchedPosts = (posts: typeof Post[]): void => {
+    const newPosts = [...this.state.posts, ...posts];
+    const newPostsSet = this.removeDuplicates(newPosts, 'id');
+
     this.setState({
-      posts: [...this.state.posts, ...posts],
+      posts: newPostsSet,
       isLoadingMoreArticles: false,
       isRefreshing: false
     });
 
-    await AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.posts));
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.posts));
   };
 
   showAlert = (error: string): void => {
@@ -181,7 +166,6 @@ class ArticleList extends React.Component<Props, State> {
       [
         {
           text: translate('OK'),
-          onPress: () => console.log('Cancel Pressed'),
           style: 'cancel'
         }
       ],
@@ -190,43 +174,19 @@ class ArticleList extends React.Component<Props, State> {
     console.error(error);
   };
 
-  handleRefresh = async (): void => {
-    this.setState(
-      {
-        page: 1,
-        isLoadingMoreArticles: false,
-        isRefreshing: true
-      },
-      () => {
-        this.loadPosts();
-      }
-    );
+  handleRefresh = (): void => {
+    const { page, query } = this.state;
+    this.loadPosts(page, false, true, query);
   };
 
   loadMoreArticles = (): void => {
-    this.setState(
-      {
-        page: this.state.page + 1,
-        isLoadingMoreArticles: true,
-        isRefreshing: false
-      },
-      () => {
-        this.loadPosts();
-      }
-    );
+    const { page, query } = this.state;
+    this.loadPosts(page + 1, true, false, query);
   };
 
   handleSearchOnChange = (query: string): void => {
-    this.setState(
-      {
-        query: query || '',
-        isLoadingMoreArticles: false,
-        isRefreshing: true
-      },
-      () => {
-        this.loadPosts();
-      }
-    );
+    const { page } = this.state;
+    this.loadPosts(query ? page : 1, false, true, query);
   };
 
   renderHeader = () => (

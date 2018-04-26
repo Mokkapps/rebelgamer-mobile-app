@@ -27,7 +27,8 @@
   "jest": {
     "automock": false,
     "setupFiles": [
-      "./test/SetupJest.js"
+      "./test/setup-jest.js",
+      "./test/setup-enzyme.js"
     ],
     "preset": "jest-expo"
   },
@@ -44,14 +45,15 @@
     "react-native-render-html": "^3.9.3",
     "react-native-vector-icons": "^4.6.0",
     "react-native-webview-autoheight": "^1.0.5",
-    "react-navigation": "^1.5.11",
-    "rxjs": "^5.5.8"
+    "react-navigation": "^1.5.11"
   },
   "devDependencies": {
     "babel-cli": "^6.26.0",
     "babel-eslint": "^8.2.2",
     "babel-preset-flow": "^6.23.0",
     "babel-preset-react-native-stage-0": "^1.0.1",
+    "enzyme": "^3.3.0",
+    "enzyme-adapter-react-16": "^1.1.1",
     "eslint": "^4.19.1",
     "eslint-config-airbnb": "^16.1.0",
     "eslint-plugin-import": "^2.10.0",
@@ -61,6 +63,10 @@
     "flow-bin": "0.69.0",
     "jest-expo": "26.0.0",
     "jest-fetch-mock": "^1.5.0",
+    "jsdom": "^11.9.0",
+    "react-dom": "^16.3.2",
+    "react-native-mock": "^0.3.1",
+    "react-native-mock-render": "^0.0.22",
     "react-test-renderer": "16.3.0"
   }
 }

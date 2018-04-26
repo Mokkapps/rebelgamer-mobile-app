@@ -102,7 +102,7 @@ android {
         applicationId "de.rebelgamer.RebelGamerRSS"
         minSdkVersion 16
         targetSdkVersion 23
-        versionCode 34
+        versionCode 35
         versionName "3.0.2"
         ndk {
             abiFilters "armeabi-v7a", "x86"

@@ -1,22 +1,13 @@
 // @flow
 
-import {
-  ActivityIndicator,
-  Linking,
-  Platform,
-  ScrollView,
-  Share,
-  StyleSheet,
-  TouchableHighlight,
-  View
-} from 'react-native';
+import { ActivityIndicator, Linking, Platform, ScrollView, Share, StyleSheet, View } from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import MyWebView from 'react-native-webview-autoheight';
 import React from 'react';
 
 import ArticleDetailsHeader from './ArticleDetailsHeader';
 import Post from './../wp-types';
-import Style from './../styles';
+import ArticleDetailsHtmlStyle from './../article-details-html-styles';
 import translate from './../utils/translate';
 import { REBELGAMER_RED } from '../constants';
 import decodeHtml from '../utils/html-decoder';
@@ -60,6 +51,9 @@ const styles = StyleSheet.create({
     flexWrap: 'wrap',
     justifyContent: 'space-around',
     margin: 5
+  },
+  webview: {
+    backgroundColor: 'transparent'
   }
 });
 
@@ -135,7 +129,7 @@ class ArticleDetails extends React.Component<Props, State> {
   openUrl = async (url: string): Promise<boolean> => {
     const supported = await Linking.canOpenURL(url);
     if (!supported) {
-      console.log(`Can't handle url: ${url}`);
+      console.warn(`Can't handle url: ${url}`);
     }
     const opened = await Linking.openURL(url);
     return Promise.resolve(opened);
@@ -158,12 +152,10 @@ class ArticleDetails extends React.Component<Props, State> {
         <ArticleDetailsHeader article={article} />
         <View style={styles.separator} />
         <MyWebView
-          style={{
-            backgroundColor: 'transparent'
-          }}
+          style={styles.webview}
           scrollEnabled={false}
           source={{
-            html: article.content.rendered + Style,
+            html: article.content.rendered + ArticleDetailsHtmlStyle,
             baseUrl: Platform.OS === 'android' ? 'file:///android_asset/' : ''
           }}
           onLoadEnd={this.stopLoading}

@@ -30,7 +30,7 @@ or
 $ npm ios
 ```
 
-# Create release
+# Run iOS or Android release builds locally
 
 ```
 $ npm android-release
@@ -38,17 +38,22 @@ or
 $ npm ios-release
 ```
 
-# Report a bug
+# Build releases for App stores
 
+## iOS
+* In Xcode open __RebelGamer.xcodeproj__ from ./ios folder 
+* Select ```Product > Archive``` from menu bar
+
+## Android
+* Place your keystore in root folder
+* Enter your keystore password in ./android/gradle.properties
+* Run ```cd android && ./gradlew assembleRelease```
+
+# Report a bug
 Please create a [GitHub issue](https://github.com/MrMojo86/RebelGamer/issues)
 
 # Using
-
 * [React Native](https://facebook.github.io/react-native/)
 * [React Navigation](https://reactnavigation.org/)
 * [React Native Elements ](https://react-native-training.github.io/react-native-elements/)
 * [React Native Vector Icons](https://github.com/oblador/react-native-vector-icons)
-
-# Known issues
-
-* Android: Clicking on links in the detail view opens the link in a new browser window but the WebView also navigates to this page
