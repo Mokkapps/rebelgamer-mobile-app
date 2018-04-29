@@ -2,43 +2,30 @@
 
 import {
   ActivityIndicator,
-  Alert,
   Button,
-  AsyncStorage,
   FlatList,
-  NetInfo,
   StyleSheet,
   Text,
-  Platform,
   TouchableHighlight,
   View
 } from 'react-native';
-import { Icon, SearchBar } from 'react-native-elements';
 import React from 'react';
-import Toast from 'react-native-toast-native';
-import debounce from 'debounce';
-import axios, { CancelTokenSource } from 'axios';
 import { NavigationState } from 'react-navigation';
 
 import ArticleListItem from './../components/ArticleListItem';
-import HeaderImage from './../components/HeaderImage';
 import Post from './../wp-types';
-import { REBELGAMER_RED, STORAGE_KEY } from '../constants';
-import translate from '../utils/translate';
-import fetchPosts from '../utils/wp-connector';
-import DeviceDetector from '../utils/DeviceDetector';
+import { REBELGAMER_RED } from '../constants';
+import translate from '../translate';
 
 type Props = {
-  navigation: NavigationState
-};
-
-type State = {
-  isLoadingMoreArticles: boolean,
-  page: number,
+  navigation: NavigationState,
   posts: typeof Post[],
+  onTagSelect: Function,
+  onRefresh: Function,
+  onLoadMoreArticles: Function,
   isRefreshing: boolean,
-  query: string,
-  probablyHasInternet: boolean | undefined
+  isLoadingMoreArticles: boolean,
+  listHeader: any
 };
 
 const styles = StyleSheet.create({
@@ -57,15 +44,6 @@ const styles = StyleSheet.create({
     borderTopWidth: 1,
     borderColor: '#CED0CE'
   },
-  headerRightButton: {
-    marginRight: 10
-  },
-  toast: {
-    marginLeft: 10,
-    marginRight: 10,
-    marginBottom: 30,
-    backgroundColor: REBELGAMER_RED
-  },
   loadMoreButton: {
     margin: 10
   },
@@ -75,190 +53,13 @@ const styles = StyleSheet.create({
   }
 });
 
-const toastStyle = {
-  backgroundColor: REBELGAMER_RED,
-  color: '#ffffff',
-  height: Platform.OS === 'ios' ? 80 : 140,
-  width: DeviceDetector.getWidth() - 20,
-  borderRadius: 5,
-  yOffset: Platform.OS === 'ios' ? 0 : 20,
-};
-
-const NETWORK_FETCH_URL = 'https://google.com';
-
-class ArticleList extends React.Component<Props, State> {
-  static navigationOptions = ({ navigation }) => {
-    const { navigate } = navigation;
-
-    return {
-      headerTitle: <HeaderImage />,
-      headerRight: (
-        <Icon
-          iconStyle={styles.headerRightButton}
-          name="info-outline"
-          onPress={() => navigate('About')}
-        />
-      )
-    };
-  };
-
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      isLoadingMoreArticles: false,
-      page: 1,
-      posts: [],
-      isRefreshing: true,
-      query: '',
-      probablyHasInternet: undefined
-    };
-
-    this.onSearchTextChange = debounce(this.handleSearchOnChange.bind(this), 500);
-
-    NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
-  }
-
-  async componentDidMount() {
-    Toast.show(translate('LOAD_STORED_ARTICLES'), Toast.LONG, Toast.BOTTOM, toastStyle);
-    await NetInfo.getConnectionInfo().then(this.handleConnectivityChange);
-    await this.loadPosts();
-  }
-
+class ArticleList extends React.Component<Props> {
   onTagSelect = tagName => {
-    const { page } = this.state;
-    this.loadPosts(page, false, true, tagName);
+    this.props.onTagSelect(tagName);
   };
-
-  getStoredPosts = async (): Promise<typeof Post[]> => {
-    const storedPosts = await AsyncStorage.getItem(STORAGE_KEY);
-    return Promise.resolve(storedPosts ? JSON.parse(storedPosts) : []);
-  };
-
-  getStoredArticles = async (): Promise<typeof Post[]> => {
-    // eslint-disable-next-line react/no-string-refs
-    Toast.show(translate('LOAD_STORED_ARTICLES'), Toast.LONG, Toast.BOTTOM, toastStyle);
-    return this.getStoredPosts();
-  };
-
-  handleConnectivityChange = async () => {
-    let probablyHasInternet;
-    try {
-      const googleCall = await fetch(NETWORK_FETCH_URL);
-      probablyHasInternet = googleCall.status === 200;
-    } catch (e) {
-      probablyHasInternet = false;
-    }
-
-    this.setState({ probablyHasInternet });
-  };
-
-  loadPosts = (
-    page: number = 1,
-    isLoadingMoreArticles: boolean = false,
-    isRefreshing: boolean = true,
-    query: string = ''
-  ) => {
-    this.setState(
-      {
-        page,
-        isLoadingMoreArticles,
-        isRefreshing,
-        query
-      },
-      () => {
-        this._fetchPosts()
-          .then(posts => this.handleFetchedPosts(posts))
-          .catch(err => this.showAlert(err));
-      }
-    );
-  };
-
-  source: CancelTokenSource;
-
-  _fetchPosts = async (): Promise<Post[]> => {
-    // cancel the previous request
-    if (typeof this.source !== typeof undefined) {
-      this.source.cancel('Fetching posts canceled due to new request');
-    }
-
-    const { query, page, isRefreshing, probablyHasInternet } = this.state;
-
-    if (!probablyHasInternet) {
-      const storedPosts = await this.getStoredArticles();
-      return Promise.resolve(storedPosts);
-    }
-
-    // Clear list if necessary
-    if ((query && page === 1) || isRefreshing) {
-      this.setState({ posts: [], page: 1 });
-    }
-
-    // save the new request for cancellation
-    this.source = axios.CancelToken.source();
-    return fetchPosts(page, query, this.source.token);
-  };
-
-  removeDuplicates = (myArr, prop) =>
-    myArr.filter((obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos);
-
-  handleFetchedPosts = (posts: typeof Post[] | undefined): void => {
-    if (!posts) {
-      return;
-    }
-    const newPosts = [...this.state.posts, ...posts];
-    const newPostsSet = this.removeDuplicates(newPosts, 'id');
-
-    this.setState({
-      posts: newPostsSet,
-      isLoadingMoreArticles: false,
-      isRefreshing: false
-    });
-
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.posts));
-  };
-
-  showAlert = (error: string): void => {
-    Alert.alert(
-      translate('ALERT_TITLE'),
-      `${translate('ALERT_MESSAGE')} ${error}`,
-      [
-        {
-          text: translate('OK'),
-          style: 'cancel'
-        }
-      ],
-      { cancelable: false }
-    );
-    console.error(error);
-  };
-
-  handleRefresh = (): void => {
-    const { page, query } = this.state;
-    this.loadPosts(page, false, true, query);
-  };
-
-  loadMoreArticles = (): void => {
-    const { page, query } = this.state;
-    this.loadPosts(page + 1, true, false, query);
-  };
-
-  handleSearchOnChange = (query: string): void => {
-    const { page } = this.state;
-    this.loadPosts(query ? page : 1, false, true, query);
-  };
-
-  renderHeader = () => (
-    <SearchBar
-      lightTheme
-      onChangeText={this.onSearchTextChange}
-      placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
-      value={this.state.query}
-    />
-  );
 
   renderFooter = () => {
-    if (!this.state.isLoadingMoreArticles && this.state.posts.length > 0) {
+    if (!this.props.isLoadingMoreArticles && this.props.posts.length > 0) {
       return (
         <View>
           <View style={styles.separator} />
@@ -266,17 +67,17 @@ class ArticleList extends React.Component<Props, State> {
             style={styles.loadMoreButton}
             title={translate('LOAD_MORE_ARTICLES')}
             color={REBELGAMER_RED}
-            onPress={this.loadMoreArticles}
+            onPress={this.props.onLoadMoreArticles}
           />
         </View>
       );
     }
 
-    if (this.state.isRefreshing) {
+    if (this.props.isRefreshing) {
       return null;
     }
 
-    if (this.state.posts.length === 0) {
+    if (this.props.posts.length === 0) {
       return <Text style={styles.noArticlesText}>{translate('FOUND_NO_ARTICLES')}</Text>;
     }
 
@@ -292,24 +93,22 @@ class ArticleList extends React.Component<Props, State> {
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.state.posts}
+          data={this.props.posts}
           renderItem={({ item }) => (
             <TouchableHighlight
               underlayColor="lightgray"
-              onPress={() =>
-                navigate('ArticleDetails', { article: item, onTagSelect: this.onTagSelect })
-              }
+              onPress={() => navigate('ArticleDetails', { article: item })}
             >
               <ArticleListItem article={item} />
             </TouchableHighlight>
           )}
           keyExtractor={(item: Post) => item.id.toString()}
-          ListHeaderComponent={this.renderHeader}
+          ListHeaderComponent={this.props.listHeader}
           // Necessary to show footer on Android
           // eslint-disable-next-line react/jsx-no-bind
           ListFooterComponent={this.renderFooter.bind(this)}
-          refreshing={this.state.isRefreshing}
-          onRefresh={this.handleRefresh}
+          refreshing={this.props.isRefreshing}
+          onRefresh={this.props.onRefresh}
         />
       </View>
     );

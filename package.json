@@ -1,6 +1,6 @@
 {
   "name": "rebelgamer-mobile-app",
-  "version": "3.0.2",
+  "version": "3.1.0",
   "description": "Mobile app for the gaming blog \"RebelGamer\"",
   "homepage": "https://github.com/Mokkapps/rebelgamer-mobile-app",
   "author": {
@@ -26,10 +26,7 @@
   },
   "jest": {
     "automock": false,
-    "setupFiles": [
-      "./test/setup-jest.js",
-      "./test/setup-enzyme.js"
-    ],
+    "setupFiles": ["./test/setup-jest.js", "./test/setup-enzyme.js"],
     "preset": "jest-expo"
   },
   "dependencies": {

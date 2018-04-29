@@ -69,7 +69,7 @@ exports[`renders correctly 1`] = `
       ]
     }
   >
-    Version: 3.0.2
+    Version: 3.1.0
   </Text>
   <Text
     accessible={true}

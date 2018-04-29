@@ -1,6 +1,14 @@
 // @flow
 
-import { ActivityIndicator, Linking, Platform, ScrollView, Share, StyleSheet, View } from 'react-native';
+import {
+  ActivityIndicator,
+  Linking,
+  Platform,
+  ScrollView,
+  Share,
+  StyleSheet,
+  View
+} from 'react-native';
 import { Badge, Icon } from 'react-native-elements';
 import MyWebView from 'react-native-webview-autoheight';
 import React from 'react';
@@ -8,9 +16,9 @@ import React from 'react';
 import ArticleDetailsHeader from './ArticleDetailsHeader';
 import Post from './../wp-types';
 import ArticleDetailsHtmlStyle from './../article-details-html-styles';
-import translate from './../utils/translate';
+import translate from './../translate';
 import { REBELGAMER_RED } from '../constants';
-import decodeHtml from '../utils/html-decoder';
+import decodeHtml from '../html-decoder';
 
 type Props = {
   navigation: {
@@ -68,7 +76,11 @@ class ArticleDetails extends React.Component<Props, State> {
       headerTintColor: REBELGAMER_RED,
       headerRight: (
         <View style={styles.headerButtonGroup}>
-          <Icon name="open-in-browser" color="red" onPress={() => params.handleOpenInBrowser(article.link)} />
+          <Icon
+            name="open-in-browser"
+            color="red"
+            onPress={() => params.handleOpenInBrowser(article.link)}
+          />
           <Icon name="share" color="red" onPress={() => params.handleShare()} />
         </View>
       )
@@ -143,6 +155,7 @@ class ArticleDetails extends React.Component<Props, State> {
   };
 
   render() {
+    const { navigate } = this.props.navigation;
     const { article } = this.props.navigation.state.params;
     const tags = article._embedded['wp:term'][1].map(tag => (
       <Badge
@@ -151,7 +164,7 @@ class ArticleDetails extends React.Component<Props, State> {
         value={tag.name || ''}
         textStyle={{ color: 'white' }}
         containerStyle={{ backgroundColor: REBELGAMER_RED }}
-        onPress={() => this.onTagSelect(tag.name)}
+        onPress={() => navigate('ArticleSearch', { tagName: tag.name })}
       />
     ));
 

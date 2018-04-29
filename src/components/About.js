@@ -6,11 +6,17 @@ import { Text } from 'react-native-elements';
 import email from 'react-native-email';
 
 import { version } from './../../package.json';
-import DeviceDetector from './../utils/DeviceDetector';
-import { REBELGAMER_RED, MOKKAPPS_MAIL, REBELGAMER_MAIL, APPLE_APP_ID, GOOGLE_PACKAGE_NAME } from '../constants';
-import translate from '../utils/translate';
+import isTablet from './../device-detector';
+import {
+  REBELGAMER_RED,
+  MOKKAPPS_MAIL,
+  REBELGAMER_MAIL,
+  APP_STORE_URL,
+  GOOGLE_PLAY_URL
+} from '../constants';
+import translate from '../translate';
 
-const tvImage = require('../../assets/tv.png');
+const TV_IMAGE = require('../../assets/tv.png');
 
 const styles = StyleSheet.create({
   appName: {
@@ -33,7 +39,7 @@ const styles = StyleSheet.create({
     marginTop: 20,
     textAlign: 'center',
     color: 'black',
-    fontSize: DeviceDetector.isTablet() ? 20 : 15
+    fontSize: isTablet() ? 20 : 15
   },
   button: {
     marginTop: 20,
@@ -53,28 +59,34 @@ class About extends React.Component<Props, State> {
   onPressContact = () => {
     const os = Platform.OS === 'ios' ? 'iOS' : 'Android';
     const to = [MOKKAPPS_MAIL, REBELGAMER_MAIL];
-    email(to, { subject: `${translate('MAIL_SUBJECT')} (Version: ${version}, OS: ${os})` }).catch(console.error);
+    email(to, { subject: `${translate('MAIL_SUBJECT')} (Version: ${version}, OS: ${os})` }).catch(
+      console.error
+    );
   };
 
   onPressRate = async () => {
     if (Platform.OS === 'ios') {
-      await Linking.openURL(`itms-apps://itunes.apple.com/app/id${APPLE_APP_ID}`);
+      await Linking.openURL(APP_STORE_URL);
     } else {
-      await Linking.openURL(`http://play.google.com/store/apps/details?id=${GOOGLE_PACKAGE_NAME}`);
+      await Linking.openURL(GOOGLE_PLAY_URL);
     }
   };
 
   render() {
     return (
       <View style={styles.container}>
-        <Image style={styles.image} source={tvImage} />
+        <Image style={styles.image} source={TV_IMAGE} />
         <Text h3 style={styles.appName}>
           {translate('APP_NAME')}
         </Text>
         <Text>{`${translate('VERSION')} ${version}`}</Text>
         <Text style={styles.description}>{translate('APP_DESCRIPTION')}</Text>
         <View style={styles.button}>
-          <Button title={translate('CONTACT_US')} color={REBELGAMER_RED} onPress={this.onPressContact} />
+          <Button
+            title={translate('CONTACT_US')}
+            color={REBELGAMER_RED}
+            onPress={this.onPressContact}
+          />
         </View>
         <View style={styles.button}>
           <Button title={translate('RATE_APP')} color={REBELGAMER_RED} onPress={this.onPressRate} />

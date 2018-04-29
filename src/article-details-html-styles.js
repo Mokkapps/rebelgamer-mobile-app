@@ -1,7 +1,7 @@
-import DeviceDetector from './utils/DeviceDetector';
+import isTablet from './device-detector';
 import { HEADLINE_IMAGE_HEIGHT } from './constants';
 
-const fontSizeParagraph = DeviceDetector.isTablet() ? 22 : 17;
+const fontSizeParagraph = isTablet() ? 22 : 17;
 
 const ArticleDetailsHtmlStyle = `
 <style>
