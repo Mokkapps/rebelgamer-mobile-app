@@ -9,12 +9,13 @@ import {
   NetInfo,
   StyleSheet,
   Text,
+  Platform,
   TouchableHighlight,
   View
 } from 'react-native';
 import { Icon, SearchBar } from 'react-native-elements';
 import React from 'react';
-import Toast from 'react-native-easy-toast';
+import Toast from 'react-native-toast-native';
 import debounce from 'debounce';
 import axios, { CancelTokenSource } from 'axios';
 import { NavigationState } from 'react-navigation';
@@ -25,6 +26,7 @@ import Post from './../wp-types';
 import { REBELGAMER_RED, STORAGE_KEY } from '../constants';
 import translate from '../utils/translate';
 import fetchPosts from '../utils/wp-connector';
+import DeviceDetector from '../utils/DeviceDetector';
 
 type Props = {
   navigation: NavigationState
@@ -73,6 +75,15 @@ const styles = StyleSheet.create({
   }
 });
 
+const toastStyle = {
+  backgroundColor: REBELGAMER_RED,
+  color: '#ffffff',
+  height: Platform.OS === 'ios' ? 80 : 140,
+  width: DeviceDetector.getWidth() - 20,
+  borderRadius: 5,
+  yOffset: Platform.OS === 'ios' ? 0 : 20,
+};
+
 const NETWORK_FETCH_URL = 'https://google.com';
 
 class ArticleList extends React.Component<Props, State> {
@@ -109,13 +120,13 @@ class ArticleList extends React.Component<Props, State> {
   }
 
   async componentDidMount() {
+    Toast.show(translate('LOAD_STORED_ARTICLES'), Toast.LONG, Toast.BOTTOM, toastStyle);
     await NetInfo.getConnectionInfo().then(this.handleConnectivityChange);
     await this.loadPosts();
   }
 
   onTagSelect = tagName => {
     const { page } = this.state;
-    const { navigation } = this.props;
     this.loadPosts(page, false, true, tagName);
   };
 
@@ -126,7 +137,7 @@ class ArticleList extends React.Component<Props, State> {
 
   getStoredArticles = async (): Promise<typeof Post[]> => {
     // eslint-disable-next-line react/no-string-refs
-    this.refs.toast.show(translate('LOAD_STORED_ARTICLES'), 5000);
+    Toast.show(translate('LOAD_STORED_ARTICLES'), Toast.LONG, Toast.BOTTOM, toastStyle);
     return this.getStoredPosts();
   };
 
@@ -299,13 +310,6 @@ class ArticleList extends React.Component<Props, State> {
           ListFooterComponent={this.renderFooter.bind(this)}
           refreshing={this.state.isRefreshing}
           onRefresh={this.handleRefresh}
-        />
-        <Toast
-          ref="toast" // eslint-disable-line react/no-string-refs
-          style={styles.toast}
-          positionValue={150}
-          textStyle={{ textAlign: 'center', color: 'white' }}
-          position="bottom"
         />
       </View>
     );

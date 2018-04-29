@@ -15,6 +15,10 @@ class DeviceDetector {
     this.isTablet();
   }
 
+  getWidth() {
+    return this.width;
+  }
+
   isTablet() {
     if (this.pixelDensity < 2 && (this.adjustedWidth >= 1000 || this.adjustedHeight >= 1000)) {
       return true;
