@@ -20,6 +20,7 @@ const styles = StyleSheet.create({
   headline: {
     fontWeight: 'bold',
     color: 'black',
+    textAlign: 'center',
     fontSize: FONT_SIZE_HEADLINE,
     marginHorizontal: 10
   },

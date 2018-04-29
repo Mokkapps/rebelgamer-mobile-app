@@ -6,7 +6,9 @@ import {
   Button,
   AsyncStorage,
   FlatList,
+  NetInfo,
   StyleSheet,
+  Text,
   TouchableHighlight,
   View
 } from 'react-native';
@@ -14,11 +16,11 @@ import { Icon, SearchBar } from 'react-native-elements';
 import React from 'react';
 import Toast from 'react-native-easy-toast';
 import debounce from 'debounce';
+import axios, { CancelTokenSource } from 'axios';
 import { NavigationState } from 'react-navigation';
 
 import ArticleListItem from './../components/ArticleListItem';
 import HeaderImage from './../components/HeaderImage';
-import hasInternetConnection from '../utils/connection-checker';
 import Post from './../wp-types';
 import { REBELGAMER_RED, STORAGE_KEY } from '../constants';
 import translate from '../utils/translate';
@@ -33,7 +35,8 @@ type State = {
   page: number,
   posts: typeof Post[],
   isRefreshing: boolean,
-  query: string
+  query: string,
+  probablyHasInternet: boolean | undefined
 };
 
 const styles = StyleSheet.create({
@@ -63,8 +66,14 @@ const styles = StyleSheet.create({
   },
   loadMoreButton: {
     margin: 10
+  },
+  noArticlesText: {
+    textAlign: 'center',
+    margin: 10
   }
 });
+
+const NETWORK_FETCH_URL = 'https://google.com';
 
 class ArticleList extends React.Component<Props, State> {
   static navigationOptions = ({ navigation }) => {
@@ -72,7 +81,13 @@ class ArticleList extends React.Component<Props, State> {
 
     return {
       headerTitle: <HeaderImage />,
-      headerRight: <Icon iconStyle={styles.headerRightButton} name="info-outline" onPress={() => navigate('About')} />
+      headerRight: (
+        <Icon
+          iconStyle={styles.headerRightButton}
+          name="info-outline"
+          onPress={() => navigate('About')}
+        />
+      )
     };
   };
 
@@ -84,15 +99,25 @@ class ArticleList extends React.Component<Props, State> {
       page: 1,
       posts: [],
       isRefreshing: true,
-      query: ''
+      query: '',
+      probablyHasInternet: undefined
     };
 
     this.onSearchTextChange = debounce(this.handleSearchOnChange.bind(this), 500);
+
+    NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
   }
 
   async componentDidMount() {
+    await NetInfo.getConnectionInfo().then(this.handleConnectivityChange);
     await this.loadPosts();
   }
+
+  onTagSelect = tagName => {
+    const { page } = this.state;
+    const { navigation } = this.props;
+    this.loadPosts(page, false, true, tagName);
+  };
 
   getStoredPosts = async (): Promise<typeof Post[]> => {
     const storedPosts = await AsyncStorage.getItem(STORAGE_KEY);
@@ -103,6 +128,18 @@ class ArticleList extends React.Component<Props, State> {
     // eslint-disable-next-line react/no-string-refs
     this.refs.toast.show(translate('LOAD_STORED_ARTICLES'), 5000);
     return this.getStoredPosts();
+  };
+
+  handleConnectivityChange = async () => {
+    let probablyHasInternet;
+    try {
+      const googleCall = await fetch(NETWORK_FETCH_URL);
+      probablyHasInternet = googleCall.status === 200;
+    } catch (e) {
+      probablyHasInternet = false;
+    }
+
+    this.setState({ probablyHasInternet });
   };
 
   loadPosts = (
@@ -126,27 +163,38 @@ class ArticleList extends React.Component<Props, State> {
     );
   };
 
+  source: CancelTokenSource;
+
   _fetchPosts = async (): Promise<Post[]> => {
-    const hasConnection = await hasInternetConnection();
-    if (!hasConnection) {
+    // cancel the previous request
+    if (typeof this.source !== typeof undefined) {
+      this.source.cancel('Fetching posts canceled due to new request');
+    }
+
+    const { query, page, isRefreshing, probablyHasInternet } = this.state;
+
+    if (!probablyHasInternet) {
       const storedPosts = await this.getStoredArticles();
       return Promise.resolve(storedPosts);
     }
-
-    const { query, page, isRefreshing } = this.state;
 
     // Clear list if necessary
     if ((query && page === 1) || isRefreshing) {
       this.setState({ posts: [], page: 1 });
     }
 
-    return fetchPosts(page, query);
+    // save the new request for cancellation
+    this.source = axios.CancelToken.source();
+    return fetchPosts(page, query, this.source.token);
   };
 
   removeDuplicates = (myArr, prop) =>
     myArr.filter((obj, pos, arr) => arr.map(mapObj => mapObj[prop]).indexOf(obj[prop]) === pos);
 
-  handleFetchedPosts = (posts: typeof Post[]): void => {
+  handleFetchedPosts = (posts: typeof Post[] | undefined): void => {
+    if (!posts) {
+      return;
+    }
     const newPosts = [...this.state.posts, ...posts];
     const newPostsSet = this.removeDuplicates(newPosts, 'id');
 
@@ -190,7 +238,12 @@ class ArticleList extends React.Component<Props, State> {
   };
 
   renderHeader = () => (
-    <SearchBar lightTheme onChangeText={this.onSearchTextChange} placeholder={translate('PLACEHOLDER_SEARCH_BAR')} />
+    <SearchBar
+      lightTheme
+      onChangeText={this.onSearchTextChange}
+      placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
+      value={this.state.query}
+    />
   );
 
   renderFooter = () => {
@@ -212,6 +265,10 @@ class ArticleList extends React.Component<Props, State> {
       return null;
     }
 
+    if (this.state.posts.length === 0) {
+      return <Text style={styles.noArticlesText}>{translate('FOUND_NO_ARTICLES')}</Text>;
+    }
+
     return (
       <View style={styles.footer}>
         <ActivityIndicator color={REBELGAMER_RED} animating size="large" />
@@ -226,7 +283,12 @@ class ArticleList extends React.Component<Props, State> {
         <FlatList
           data={this.state.posts}
           renderItem={({ item }) => (
-            <TouchableHighlight onPress={() => navigate('ArticleDetails', { article: item })}>
+            <TouchableHighlight
+              underlayColor="lightgray"
+              onPress={() =>
+                navigate('ArticleDetails', { article: item, onTagSelect: this.onTagSelect })
+              }
+            >
               <ArticleListItem article={item} />
             </TouchableHighlight>
           )}
@@ -241,6 +303,7 @@ class ArticleList extends React.Component<Props, State> {
         <Toast
           ref="toast" // eslint-disable-line react/no-string-refs
           style={styles.toast}
+          positionValue={150}
           textStyle={{ textAlign: 'center', color: 'white' }}
           position="bottom"
         />

@@ -39,9 +39,9 @@ class ArticleDetailsHeader extends React.PureComponent<Props> {
   render() {
     const { article } = this.props;
     return [
-      <Image style={styles.image} source={{ uri: this.getArticleImage(article) }} />,
-      <Text style={styles.headline}>{decodeHtml(article.title.rendered)}</Text>,
-      <Text style={styles.author}>{this.getDateAndAuthor(article)}</Text>
+      <Image key="image" style={styles.image} source={{ uri: this.getArticleImage(article) }} />,
+      <Text key="headline" style={styles.headline}>{decodeHtml(article.title.rendered)}</Text>,
+      <Text key="date-and-author" style={styles.author}>{this.getDateAndAuthor(article)}</Text>
     ];
   }
 }

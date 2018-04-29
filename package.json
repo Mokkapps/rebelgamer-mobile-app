@@ -33,6 +33,7 @@
     "preset": "jest-expo"
   },
   "dependencies": {
+    "axios": "^0.18.0",
     "babel-plugin-transform-remove-console": "^6.9.0",
     "debounce": "^1.1.0",
     "html-entities": "^1.2.1",

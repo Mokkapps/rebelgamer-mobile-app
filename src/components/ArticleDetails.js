@@ -14,6 +14,7 @@ import decodeHtml from '../utils/html-decoder';
 
 type Props = {
   navigation: {
+    goBack: Function,
     setParams: Function,
     navigate: Object,
     params: {
@@ -105,8 +106,10 @@ class ArticleDetails extends React.Component<Props, State> {
     return true;
   };
 
-  stopLoading = () => {
-    this.setState({ isLoading: false });
+  onTagSelect = tagName => {
+    const { navigation } = this.props;
+    navigation.goBack();
+    navigation.state.params.onTagSelect(tagName);
   };
 
   shareArticle = () => {
@@ -135,6 +138,10 @@ class ArticleDetails extends React.Component<Props, State> {
     return Promise.resolve(opened);
   };
 
+  stopLoading = () => {
+    this.setState({ isLoading: false });
+  };
+
   render() {
     const { article } = this.props.navigation.state.params;
     const tags = article._embedded['wp:term'][1].map(tag => (
@@ -144,6 +151,7 @@ class ArticleDetails extends React.Component<Props, State> {
         value={tag.name || ''}
         textStyle={{ color: 'white' }}
         containerStyle={{ backgroundColor: REBELGAMER_RED }}
+        onPress={() => this.onTagSelect(tag.name)}
       />
     ));
 
