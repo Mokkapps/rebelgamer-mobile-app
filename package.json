@@ -26,7 +26,10 @@
   },
   "jest": {
     "automock": false,
-    "setupFiles": ["./test/setup-jest.js", "./test/setup-enzyme.js"],
+    "setupFiles": [
+      "./test/setup-jest.js",
+      "./test/setup-enzyme.js"
+    ],
     "preset": "jest-expo"
   },
   "dependencies": {
@@ -34,11 +37,13 @@
     "babel-plugin-transform-remove-console": "^6.9.0",
     "debounce": "^1.1.0",
     "html-entities": "^1.2.1",
+    "i18next": "^11.3.2",
     "moment": "^2.22.1",
     "react": "16.3.1",
     "react-native": "0.55.3",
     "react-native-elements": "^0.19.1",
     "react-native-email": "^1.0.1",
+    "react-native-i18n": "^2.0.12",
     "react-native-render-html": "^3.9.3",
     "react-native-toast-native": "^1.2.1",
     "react-native-vector-icons": "^4.6.0",
