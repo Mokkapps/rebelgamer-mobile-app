@@ -8,7 +8,6 @@ import debounce from 'debounce';
 
 import ArticleList from './../components/ArticleList';
 import Post from './../wp-types';
-import translate from '../translate';
 import fetchPosts from '../wp-connector';
 import removeDuplicates from '../utils/utils';
 
@@ -30,7 +29,7 @@ type State = {
 class ArticleSearch extends React.Component<Props, State> {
   static navigationOptions = () => {
     return {
-      headerTitle: translate('SEARCH_TITLE')
+      headerTitle: t('APP:SEARCH_TITLE')
     };
   };
 
@@ -62,7 +61,7 @@ class ArticleSearch extends React.Component<Props, State> {
 
   componentWillReceiveProps() {
     if (!this.props.screenProps.probablyHasInternet) {
-      this.props.screenProps.showErrorAlert(translate('NO_INTERNET_CONNECTION'));
+      this.props.screenProps.showErrorAlert(t('APP:NO_INTERNET_CONNECTION'));
     }
   }
 
@@ -138,7 +137,7 @@ class ArticleSearch extends React.Component<Props, State> {
             lightTheme
             onChangeText={this.onChangeTextDelayed}
             clearIcon={this.query !== ''}
-            placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
+            placeholder={t('APP:PLACEHOLDER_SEARCH_BAR')}
             showLoadingIcon={this.state.isLoading}
             value={this.query}
           />

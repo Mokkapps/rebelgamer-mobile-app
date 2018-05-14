@@ -98,11 +98,11 @@ export default class App extends React.Component<Props, State> {
 
   showErrorAlert = (error: string): void => {
     Alert.alert(
-      translate('ALERT_TITLE'),
-      `${translate('ALERT_MESSAGE')} ${error}`,
+      t('APP:ALERT_TITLE'),
+      `${t('APP:ALERT_MESSAGE')} ${error}`,
       [
         {
-          text: translate('OK'),
+          text: t('APP:OK'),
           style: 'cancel'
         }
       ],
@@ -116,6 +116,7 @@ export default class App extends React.Component<Props, State> {
       <I18nextProvider i18n={i18n}>
         <ReloadAppOnLanguageChange
           screenProps={{
+            t: i18n.getFixedT(),
             probablyHasInternet: this.state.probablyHasInternet,
             showErrorAlert: this.showErrorAlert,
             showToast: this.showToast

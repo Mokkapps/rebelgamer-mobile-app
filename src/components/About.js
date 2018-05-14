@@ -14,7 +14,6 @@ import {
   APP_STORE_URL,
   GOOGLE_PLAY_URL
 } from '../constants';
-import translate from '../translate';
 
 const TV_IMAGE = require('../../assets/tv.png');
 
@@ -59,7 +58,7 @@ class About extends React.Component<Props, State> {
   onPressContact = () => {
     const os = Platform.OS === 'ios' ? 'iOS' : 'Android';
     const to = [MOKKAPPS_MAIL, REBELGAMER_MAIL];
-    email(to, { subject: `${translate('MAIL_SUBJECT')} (Version: ${version}, OS: ${os})` }).catch(
+    email(to, { subject: `${t('APP:MAIL_SUBJECT')} (Version: ${version}, OS: ${os})` }).catch(
       console.error
     );
   };
@@ -77,19 +76,19 @@ class About extends React.Component<Props, State> {
       <View style={styles.container}>
         <Image style={styles.image} source={TV_IMAGE} />
         <Text h3 style={styles.appName}>
-          {translate('APP_NAME')}
+          {t('APP:APP_NAME')}
         </Text>
-        <Text>{`${translate('VERSION')} ${version}`}</Text>
-        <Text style={styles.description}>{translate('APP_DESCRIPTION')}</Text>
+        <Text>{`${t('APP:VERSION')} ${version}`}</Text>
+        <Text style={styles.description}>{t('APP:APP_DESCRIPTION')}</Text>
         <View style={styles.button}>
           <Button
-            title={translate('CONTACT_US')}
+            title={t('APP:CONTACT_US')}
             color={REBELGAMER_RED}
             onPress={this.onPressContact}
           />
         </View>
         <View style={styles.button}>
-          <Button title={translate('RATE_APP')} color={REBELGAMER_RED} onPress={this.onPressRate} />
+          <Button title={t('APP:RATE_APP')} color={REBELGAMER_RED} onPress={this.onPressRate} />
         </View>
       </View>
     );

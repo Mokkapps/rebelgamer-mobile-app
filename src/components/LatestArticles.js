@@ -9,7 +9,6 @@ import axios, { CancelTokenSource } from 'axios';
 import ArticleList from './../components/ArticleList';
 import HeaderImage from './../components/HeaderImage';
 import Post from './../wp-types';
-import translate from '../translate';
 import { STORAGE_KEY } from '../constants';
 import fetchPosts from '../wp-connector';
 import removeDuplicates from '../utils/utils';
@@ -82,7 +81,7 @@ class LatestArticles extends React.Component<Props, State> {
   };
 
   getStoredArticles = async (): Promise<typeof Post[]> => {
-    this.props.screenProps.showToast(translate('LOAD_STORED_ARTICLES'));
+    this.props.screenProps.showToast(t('APP:LOAD_STORED_ARTICLES'));
     return this.getStoredPosts();
   };
 
