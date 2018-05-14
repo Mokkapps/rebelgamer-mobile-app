@@ -40,6 +40,7 @@
     "i18next": "^11.3.2",
     "moment": "^2.22.1",
     "react": "16.3.1",
+    "react-i18next": "^7.6.1",
     "react-native": "0.55.3",
     "react-native-elements": "^0.19.1",
     "react-native-email": "^1.0.1",
