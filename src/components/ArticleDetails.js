@@ -16,7 +16,6 @@ import React from 'react';
 import ArticleDetailsHeader from './ArticleDetailsHeader';
 import Post from './../wp-types';
 import ArticleDetailsHtmlStyle from './../article-details-html-styles';
-import translate from './../translate';
 import { REBELGAMER_RED } from '../constants';
 import decodeHtml from '../html-decoder';
 
@@ -127,7 +126,7 @@ class ArticleDetails extends React.Component<Props, State> {
   shareArticle = () => {
     const { params } = this.props.navigation.state;
     const { article } = params;
-    const appName: string = translate('APP_NAME');
+    const appName: string = t('APP:APP_NAME');
     Share.share(
       {
         message: `${decodeHtml(article.title.rendered)} - ${article.link}`,
@@ -136,7 +135,7 @@ class ArticleDetails extends React.Component<Props, State> {
       },
       {
         // Android only:
-        dialogTitle: translate('SHARE_DIALOG_TITLE')
+        dialogTitle: t('APP:SHARE_DIALOG_TITLE')
       }
     );
   };

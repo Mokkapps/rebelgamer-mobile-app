@@ -15,7 +15,6 @@ import { NavigationState } from 'react-navigation';
 import ArticleListItem from './../components/ArticleListItem';
 import Post from './../wp-types';
 import { REBELGAMER_RED } from '../constants';
-import translate from '../translate';
 
 type Props = {
   navigation: NavigationState,
@@ -65,7 +64,7 @@ class ArticleList extends React.Component<Props> {
           <View style={styles.separator} />
           <Button
             style={styles.loadMoreButton}
-            title={translate('LOAD_MORE_ARTICLES')}
+            title={t('APP:LOAD_MORE_ARTICLES')}
             color={REBELGAMER_RED}
             onPress={this.props.onLoadMoreArticles}
           />
@@ -78,7 +77,7 @@ class ArticleList extends React.Component<Props> {
     }
 
     if (this.props.posts.length === 0) {
-      return <Text style={styles.noArticlesText}>{translate('FOUND_NO_ARTICLES')}</Text>;
+      return <Text style={styles.noArticlesText}>{t('APP:FOUND_NO_ARTICLES')}</Text>;
     }
 
     return (
