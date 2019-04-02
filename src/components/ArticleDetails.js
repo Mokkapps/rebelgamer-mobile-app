@@ -3,20 +3,23 @@
 import {
   ActivityIndicator,
   Linking,
+  Dimensions,
   Platform,
   ScrollView,
   Share,
   StyleSheet,
   View
 } from 'react-native';
-import { Badge, Icon } from 'react-native-elements';
-import MyWebView from 'react-native-webview-autoheight';
+import { Badge } from 'react-native-elements';
+import AutoHeightWebView from 'react-native-autoheight-webview';
+import HeaderButtons, { Item } from 'react-navigation-header-buttons';
 import React from 'react';
 
 import ArticleDetailsHeader from './ArticleDetailsHeader';
-import Post from './../wp-types';
-import ArticleDetailsHtmlStyle from './../article-details-html-styles';
-import translate from './../translate';
+import HeaderButton from './HeaderButton';
+import Post from '../wp-types';
+import ArticleDetailsHtmlStyle from '../article-details-html-styles';
+import translate from '../translate';
 import { REBELGAMER_RED } from '../constants';
 import decodeHtml from '../html-decoder';
 
@@ -47,13 +50,6 @@ const styles = StyleSheet.create({
     backgroundColor: '#CED0CE',
     margin: 5
   },
-  headerButtonGroup: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: 70,
-    marginRight: 10
-  },
   tagList: {
     flex: 1,
     flexDirection: 'row',
@@ -62,6 +58,10 @@ const styles = StyleSheet.create({
     margin: 5
   },
   webview: {
+    width: Dimensions.get('window').width - 10,
+    marginTop: 10,
+    marginLeft: 10,
+    marginBottom: 10,
     backgroundColor: 'transparent'
   }
 });
@@ -75,14 +75,20 @@ class ArticleDetails extends React.Component<Props, State> {
       title: '',
       headerTintColor: REBELGAMER_RED,
       headerRight: (
-        <View style={styles.headerButtonGroup}>
-          <Icon
-            name="open-in-browser"
+        <HeaderButtons HeaderButtonComponent={HeaderButton} color={REBELGAMER_RED}>
+          <Item
+            title="Open In Browser"
+            iconName="open-in-browser"
             color="red"
             onPress={() => params.handleOpenInBrowser(article.link)}
           />
-          <Icon name="share" color="red" onPress={() => params.handleShare()} />
-        </View>
+          <Item
+            title="Artikel teilen"
+            iconName="share"
+            color="red"
+            onPress={() => params.handleShare()}
+          />
+        </HeaderButtons>
       )
     };
   };
@@ -96,8 +102,9 @@ class ArticleDetails extends React.Component<Props, State> {
   }
 
   componentDidMount() {
-    this.props.navigation.setParams({ handleShare: this.shareArticle });
-    this.props.navigation.setParams({ handleOpenInBrowser: this.openUrl });
+    const { navigation } = this.props;
+    navigation.setParams({ handleShare: this.shareArticle });
+    navigation.setParams({ handleOpenInBrowser: this.openUrl });
   }
 
   onLinkPress = async (evt: any, href: string) => {
@@ -105,11 +112,15 @@ class ArticleDetails extends React.Component<Props, State> {
   };
 
   onShouldStartLoadWithRequest = async (event): boolean => {
+    const { navigation } = this.props;
+
     if (Platform.OS === 'ios' && event.navigationType === 'click') {
       await this.openUrl(event.url);
       return false;
-    } else if (Platform.OS === 'android') {
-      const { article } = this.props.navigation.state.params;
+    }
+
+    if (Platform.OS === 'android') {
+      const { article } = navigation.state.params;
       if (event.url !== article.link && event.url !== 'file:///android_asset/') {
         await this.openUrl(event.url);
       }
@@ -125,7 +136,8 @@ class ArticleDetails extends React.Component<Props, State> {
   };
 
   shareArticle = () => {
-    const { params } = this.props.navigation.state;
+    const { navigation } = this.props;
+    const { params } = navigation.state;
     const { article } = params;
     const appName: string = translate('APP_NAME');
     Share.share(
@@ -155,15 +167,17 @@ class ArticleDetails extends React.Component<Props, State> {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
-    const { article } = this.props.navigation.state.params;
+    const { isLoading } = this.state;
+    const { navigation } = this.props;
+    const { navigate } = navigation;
+    const { article } = navigation.state.params;
     const tags = article._embedded['wp:term'][1].map(tag => (
       <Badge
-        wrapperStyle={{ padding: 5 }}
+        badgeStyle={{ margin: 7, backgroundColor: REBELGAMER_RED }}
         key={tag.id}
         value={tag.name || ''}
         textStyle={{ color: 'white' }}
-        containerStyle={{ backgroundColor: REBELGAMER_RED }}
+        // containerStyle={{ margin: 10 }}
         onPress={() => navigate('ArticleSearch', { tagName: tag.name })}
       />
     ));
@@ -172,12 +186,13 @@ class ArticleDetails extends React.Component<Props, State> {
       <ScrollView>
         <ArticleDetailsHeader article={article} />
         <View style={styles.separator} />
-        <MyWebView
+        <AutoHeightWebView
           style={styles.webview}
           scrollEnabled={false}
+          baseUrl={Platform.OS === 'android' ? 'file:///android_asset/' : ''}
+          customStyle={ArticleDetailsHtmlStyle}
           source={{
-            html: article.content.rendered + ArticleDetailsHtmlStyle,
-            baseUrl: Platform.OS === 'android' ? 'file:///android_asset/' : ''
+            html: article.content.rendered
           }}
           onLoadEnd={this.stopLoading}
           startInLoadingState
@@ -185,7 +200,7 @@ class ArticleDetails extends React.Component<Props, State> {
           onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
           onNavigationStateChange={this.onShouldStartLoadWithRequest}
         />
-        {!this.state.isLoading && (
+        {!isLoading && (
           <View>
             <View style={styles.separator} />
             <View style={styles.tagList}>{tags}</View>

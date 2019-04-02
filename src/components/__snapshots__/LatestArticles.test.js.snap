@@ -10,14 +10,12 @@ exports[`renders correctly 1`] = `
 >
   <RCTScrollView
     ListFooterComponent={[Function]}
-    ListHeaderComponent={undefined}
     data={Array []}
     disableVirtualization={false}
     getItem={[Function]}
     getItemCount={[Function]}
     horizontal={false}
     initialNumToRender={10}
-    invertStickyHeaders={undefined}
     keyExtractor={[Function]}
     maxToRenderPerBatch={10}
     numColumns={1}
@@ -32,11 +30,11 @@ exports[`renders correctly 1`] = `
     refreshControl={
       <RefreshControlMock
         onRefresh={[Function]}
-        progressViewOffset={undefined}
         refreshing={true}
       />
     }
     refreshing={true}
+    removeClippedSubviews={false}
     renderItem={[Function]}
     scrollEventThrottle={50}
     stickyHeaderIndices={Array []}
@@ -48,7 +46,6 @@ exports[`renders correctly 1`] = `
     <View>
       <View
         onLayout={[Function]}
-        style={null}
       />
     </View>
   </RCTScrollView>

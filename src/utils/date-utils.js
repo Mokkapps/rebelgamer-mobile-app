@@ -11,9 +11,13 @@ export default function getPostedAtDateString(date: string): string {
 
   if (minutes < 60) {
     return 'Vor kurzem';
-  } else if (hours < 24) {
+  }
+
+  if (hours < 24) {
     return hours === 1 ? 'Vor einer Stunde' : `Vor ${hours} Stunden`;
-  } else if (days < 30) {
+  }
+
+  if (days < 30) {
     return days === 1 ? 'Vor einem Tag' : `Vor ${days} Tagen`;
   }
 

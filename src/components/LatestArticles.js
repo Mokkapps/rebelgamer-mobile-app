@@ -1,14 +1,15 @@
 // @flow
 
-import { AsyncStorage, StyleSheet, View } from 'react-native';
-import { Icon } from 'react-native-elements';
 import React from 'react';
 import { NavigationState } from 'react-navigation';
+import HeaderButtons, { Item } from 'react-navigation-header-buttons';
+import AsyncStorage from '@react-native-community/async-storage';
 import axios, { CancelTokenSource } from 'axios';
 
-import ArticleList from './../components/ArticleList';
-import HeaderImage from './../components/HeaderImage';
-import Post from './../wp-types';
+import ArticleList from './ArticleList';
+import HeaderImage from './HeaderImage';
+import HeaderButton from './HeaderButton';
+import Post from '../wp-types';
 import translate from '../translate';
 import { STORAGE_KEY } from '../constants';
 import fetchPosts from '../wp-connector';
@@ -30,16 +31,6 @@ type State = {
   isRefreshing: boolean
 };
 
-const styles = StyleSheet.create({
-  headerButtonGroup: {
-    flex: 1,
-    flexDirection: 'row',
-    justifyContent: 'space-around',
-    width: 70,
-    marginRight: 10
-  }
-});
-
 class LatestArticles extends React.Component<Props, State> {
   static navigationOptions = ({ navigation }) => {
     const { navigate } = navigation;
@@ -47,10 +38,10 @@ class LatestArticles extends React.Component<Props, State> {
     return {
       headerTitle: <HeaderImage />,
       headerRight: (
-        <View style={styles.headerButtonGroup}>
-          <Icon name="search" onPress={() => navigate('ArticleSearch')} />
-          <Icon name="info-outline" onPress={() => navigate('About')} />
-        </View>
+        <HeaderButtons HeaderButtonComponent={HeaderButton} color="black">
+          <Item title="Search" iconName="search" onPress={() => navigate('ArticleSearch')} />
+          <Item title="About" iconName="info-outline" onPress={() => navigate('About')} />
+        </HeaderButtons>
       )
     };
   };
@@ -66,8 +57,8 @@ class LatestArticles extends React.Component<Props, State> {
     };
   }
 
-  async componentWillReceiveProps() {
-    await this.loadPosts();
+  componentWillReceiveProps() {
+    this.loadPosts();
   }
 
   componentWillUnmount() {
@@ -82,7 +73,8 @@ class LatestArticles extends React.Component<Props, State> {
   };
 
   getStoredArticles = async (): Promise<typeof Post[]> => {
-    this.props.screenProps.showToast(translate('LOAD_STORED_ARTICLES'));
+    const { screenProps } = this.props;
+    screenProps.showToast(translate('LOAD_STORED_ARTICLES'));
     return this.getStoredPosts();
   };
 
@@ -91,6 +83,7 @@ class LatestArticles extends React.Component<Props, State> {
     isLoadingMoreArticles: boolean = false,
     isRefreshing: boolean = true
   ) => {
+    const { screenProps } = this.props;
     this.setState(
       {
         page,
@@ -100,7 +93,7 @@ class LatestArticles extends React.Component<Props, State> {
       () => {
         this._fetchPosts()
           .then(posts => this.handleFetchedPosts(posts))
-          .catch(err => this.props.screenProps.showErrorAlert(err));
+          .catch(err => screenProps.showErrorAlert(err));
       }
     );
   };
@@ -108,13 +101,15 @@ class LatestArticles extends React.Component<Props, State> {
   source: CancelTokenSource;
 
   _fetchPosts = async (): Promise<Post[]> => {
+    const { screenProps } = this.props;
+
     // cancel the previous request
     if (typeof this.source !== typeof undefined) {
       this.source.cancel('Fetching posts canceled due to new request');
     }
 
     const { page } = this.state;
-    if (!this.props.screenProps.probablyHasInternet) {
+    if (!screenProps.probablyHasInternet) {
       const storedPosts = await this.getStoredArticles();
       return Promise.resolve(storedPosts);
     }
@@ -128,16 +123,24 @@ class LatestArticles extends React.Component<Props, State> {
     if (!posts) {
       return;
     }
-    const newPosts = [...this.state.posts, ...posts];
-    const newPostsSet = removeDuplicates(newPosts, 'id');
+
+    let newPosts = posts;
+
+    const { page } = this.state;
+
+    if (page > 1) {
+      newPosts = removeDuplicates([...this.state.posts, ...posts], 'id');
+    }
 
     this.setState({
-      posts: newPostsSet,
+      posts: newPosts,
       isLoadingMoreArticles: false,
       isRefreshing: false
     });
 
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(this.state.posts));
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newPosts))
+      .then(() => {})
+      .catch(err => console.error('Failed saving posts', err));
   };
 
   handleRefresh = (): void => {
@@ -151,12 +154,15 @@ class LatestArticles extends React.Component<Props, State> {
   };
 
   render() {
+    const { navigation } = this.props;
+    const { posts, isRefreshing, isLoadingMoreArticles } = this.state;
+
     return (
       <ArticleList
-        navigation={this.props.navigation}
-        posts={this.state.posts}
-        isRefreshing={this.state.isRefreshing}
-        isLoadingMoreArticles={this.state.isLoadingMoreArticles}
+        navigation={navigation}
+        posts={posts}
+        isRefreshing={isRefreshing}
+        isLoadingMoreArticles={isLoadingMoreArticles}
         onRefresh={this.handleRefresh}
         onLoadMoreArticles={this.loadMoreArticles}
       />

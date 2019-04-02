@@ -1,12 +1,12 @@
 // @flow
 
-import { Button, Image, Linking, Platform, StyleSheet, View } from 'react-native';
 import React from 'react';
+import { Button, Image, Linking, Platform, StyleSheet, View } from 'react-native';
 import { Text } from 'react-native-elements';
 import email from 'react-native-email';
 
-import { version } from './../../package.json';
-import isTablet from './../device-detector';
+import { version } from '../../package.json';
+import isTablet from '../device-detector';
 import {
   REBELGAMER_RED,
   MOKKAPPS_MAIL,

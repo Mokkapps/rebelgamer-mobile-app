@@ -1,16 +1,17 @@
 // @flow
 
-import { SearchBar } from 'react-native-elements';
 import React from 'react';
 import { NavigationState } from 'react-navigation';
 import axios, { CancelTokenSource } from 'axios';
-import debounce from 'debounce';
 
-import ArticleList from './../components/ArticleList';
-import Post from './../wp-types';
+import ArticleList from './ArticleList';
+import HeaderSearchBar from './HeaderSearchBar';
+import FullScreenLoadingIndicator from './FullScreenLoadingIndicator';
+import Post from '../wp-types';
 import translate from '../translate';
 import fetchPosts from '../wp-connector';
 import removeDuplicates from '../utils/utils';
+import { REBELGAMER_RED } from '../constants';
 
 type Props = {
   navigation: NavigationState,
@@ -28,21 +29,21 @@ type State = {
 };
 
 class ArticleSearch extends React.Component<Props, State> {
-  static navigationOptions = () => {
+  static navigationOptions = ({ navigation }) => {
+    const { state } = navigation;
     return {
-      headerTitle: translate('SEARCH_TITLE')
+      headerTitle: state.params ? state.params.title : translate('SEARCH_TITLE'),
+      headerTintColor: REBELGAMER_RED
     };
   };
 
   constructor(props: Props) {
     super(props);
 
-    if (
-      this.props.navigation.state &&
-      this.props.navigation.state.params &&
-      this.props.navigation.state.params.tagName
-    ) {
-      this.query = this.props.navigation.state.params.tagName;
+    const { navigation } = this.props;
+
+    if (navigation.state && navigation.state.params && navigation.state.params.tagName) {
+      this.query = navigation.state.params.tagName;
     }
 
     this.state = {
@@ -50,8 +51,6 @@ class ArticleSearch extends React.Component<Props, State> {
       page: 1,
       posts: []
     };
-
-    this.onChangeTextDelayed = debounce(this.onChangeText.bind(this), 500);
   }
 
   componentDidMount() {
@@ -61,8 +60,9 @@ class ArticleSearch extends React.Component<Props, State> {
   }
 
   componentWillReceiveProps() {
-    if (!this.props.screenProps.probablyHasInternet) {
-      this.props.screenProps.showErrorAlert(translate('NO_INTERNET_CONNECTION'));
+    const { screenProps } = this.props;
+    if (!screenProps.probablyHasInternet) {
+      screenProps.showErrorAlert(translate('NO_INTERNET_CONNECTION'));
     }
   }
 
@@ -72,37 +72,38 @@ class ArticleSearch extends React.Component<Props, State> {
     }
   }
 
-  onChangeText = (value: string) => {
-    this.query = value;
-    this.loadPosts(1, value);
-  };
-
   source: CancelTokenSource;
 
-  _fetchPosts = async (): Promise<Post[]> => {
+  _fetchPosts = async (searchText: string): Promise<Post[]> => {
     // cancel the previous request
     if (typeof this.source !== typeof undefined) {
       this.source.cancel('Fetching posts canceled due to new request');
     }
 
     const { page } = this.state;
-    if (!this.query && page === 1) {
+    if (!searchText && page === 1) {
       this.setState({ posts: [] });
     }
     // save the new request for cancellation
     this.source = axios.CancelToken.source();
-    return fetchPosts(page, this.query, this.source.token);
+    return fetchPosts(page, searchText, this.source.token);
   };
 
   handleFetchedPosts = (posts: typeof Post[] | undefined): void => {
     if (!posts) {
       return;
     }
-    const newPosts = [...this.state.posts, ...posts];
-    const newPostsSet = removeDuplicates(newPosts, 'id');
+
+    let newPosts = posts;
+
+    const { page } = this.state;
+
+    if (page > 1) {
+      newPosts = removeDuplicates([...this.state.posts, ...posts], 'id');
+    }
 
     this.setState({
-      posts: newPostsSet,
+      posts: newPosts,
       isLoading: false
     });
   };
@@ -112,16 +113,24 @@ class ArticleSearch extends React.Component<Props, State> {
     this.loadPosts(page + 1);
   };
 
-  loadPosts = (page: number = 1) => {
+  loadPosts = (page: number = 1, searchText: string = '') => {
+    const { screenProps } = this.props;
+
+    if (searchText !== undefined) {
+      this.query = searchText;
+      const { setParams } = this.props.navigation;
+      setParams({ title: searchText });
+    }
+
     this.setState(
       {
         page,
         isLoading: true
       },
       () => {
-        this._fetchPosts()
+        this._fetchPosts(searchText)
           .then(posts => this.handleFetchedPosts(posts))
-          .catch(err => this.props.screenProps.showErrorAlert(err));
+          .catch(err => screenProps.showErrorAlert(err));
       }
     );
   };
@@ -129,25 +138,26 @@ class ArticleSearch extends React.Component<Props, State> {
   query: string;
 
   render() {
+    const { navigation } = this.props;
+    const { posts, isLoading } = this.state;
     return (
-      <ArticleList
-        navigation={this.props.navigation}
-        posts={this.state.posts}
-        listHeader={() => (
-          <SearchBar
-            lightTheme
-            onChangeText={this.onChangeTextDelayed}
-            clearIcon={this.query !== ''}
-            placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
-            showLoadingIcon={this.state.isLoading}
-            value={this.query}
-          />
-        )}
-        isLoadingMoreArticles={this.state.isLoading}
-        onLoadMoreArticles={this.loadMoreArticles}
-      />
+      <>
+        {isLoading ? <FullScreenLoadingIndicator /> : null}
+        <ArticleList
+          navigation={navigation}
+          posts={posts}
+          isRefreshing={isLoading}
+          listHeader={() => (
+            <HeaderSearchBar
+              isLoading={isLoading}
+              onSubmit={event => this.loadPosts(1, event.nativeEvent.text)}
+            />
+          )}
+          isLoadingMoreArticles={isLoading}
+          onLoadMoreArticles={this.loadMoreArticles}
+        />
+      </>
     );
   }
 }
-
 export default ArticleSearch;

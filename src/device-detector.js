@@ -11,7 +11,9 @@ export default function isTablet() {
 
   if (pixelDensity < 2 && (adjustedWidth >= 1000 || adjustedHeight >= 1000)) {
     return true;
-  } else if (pixelDensity === 2 && (adjustedWidth >= 1920 || adjustedHeight >= 1920)) {
+  }
+
+  if (pixelDensity === 2 && (adjustedWidth >= 1920 || adjustedHeight >= 1920)) {
     return true;
   }
 

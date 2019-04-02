@@ -10,7 +10,7 @@ const styles = StyleSheet.create({
     flex: 1,
     marginLeft: Platform.OS === 'android' ? 50 : 0,
     marginTop: 5,
-    height: 40,
+    height: 30,
     resizeMode: 'contain'
   }
 });

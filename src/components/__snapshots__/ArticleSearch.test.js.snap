@@ -17,7 +17,6 @@ exports[`renders correctly 1`] = `
     getItemCount={[Function]}
     horizontal={false}
     initialNumToRender={10}
-    invertStickyHeaders={undefined}
     keyExtractor={[Function]}
     maxToRenderPerBatch={10}
     numColumns={1}
@@ -25,11 +24,11 @@ exports[`renders correctly 1`] = `
     onEndReachedThreshold={2}
     onLayout={[Function]}
     onMomentumScrollEnd={[Function]}
-    onRefresh={undefined}
     onScroll={[Function]}
     onScrollBeginDrag={[Function]}
     onScrollEndDrag={[Function]}
-    refreshing={undefined}
+    refreshing={false}
+    removeClippedSubviews={false}
     renderItem={[Function]}
     scrollEventThrottle={50}
     stickyHeaderIndices={Array []}
@@ -40,133 +39,182 @@ exports[`renders correctly 1`] = `
     <View>
       <View
         onLayout={[Function]}
-        style={null}
       >
         <View
           style={
-            Array [
-              Object {
-                "backgroundColor": "#393e42",
-                "borderBottomColor": "#000",
-                "borderBottomWidth": 1,
-                "borderTopColor": "#000",
-                "borderTopWidth": 1,
-              },
-              Object {
-                "backgroundColor": "#e1e8ee",
-                "borderBottomColor": "#e1e1e1",
-                "borderTopColor": "#e1e1e1",
-              },
-              undefined,
-            ]
+            Object {
+              "backgroundColor": "#e1e8ee",
+              "borderBottomColor": "#e1e1e1",
+              "borderBottomWidth": 1,
+              "borderTopColor": "#e1e1e1",
+              "borderTopWidth": 1,
+              "padding": 8,
+            }
           }
         >
-          <TextInput
-            allowFontScaling={true}
-            onChangeText={[Function]}
-            placeholder="Suche nach bestimmten News"
-            placeholderTextColor="#86939e"
+          <View
             style={
-              Array [
+              Object {
+                "paddingHorizontal": 0,
+                "width": "100%",
+              }
+            }
+          >
+            <View
+              style={
                 Object {
-                  "backgroundColor": "#303337",
-                  "borderRadius": 3,
-                  "color": "#86939e",
-                  "fontSize": 17.5,
-                  "height": 30,
-                  "margin": 8,
-                  "overflow": "hidden",
-                  "paddingLeft": 26,
-                  "paddingRight": 19,
-                },
-                Object {
+                  "alignItems": "center",
                   "backgroundColor": "#bdc6cf",
-                },
-                false,
-                false,
-                undefined,
-                false,
-                Object {
-                  "paddingRight": 30,
-                },
-              ]
-            }
-            underlineColorAndroid="transparent"
-            value={undefined}
-          />
-          <Text
-            accessible={true}
-            allowFontScaling={false}
-            ellipsizeMode="tail"
-            style={
-              Array [
-                Object {
-                  "color": "#86939e",
-                  "fontSize": 16,
-                },
-                Array [
+                  "borderBottomWidth": 0,
+                  "borderColor": "#86939e",
+                  "borderRadius": 3,
+                  "flexDirection": "row",
+                  "minHeight": 30,
+                  "overflow": "hidden",
+                  "transform": Array [
+                    Object {
+                      "translateX": 0,
+                    },
+                  ],
+                }
+              }
+            >
+              <View
+                style={
                   Object {
-                    "backgroundColor": "transparent",
-                    "position": "absolute",
-                    "top": 15.5,
-                  },
+                    "alignItems": "center",
+                    "height": 40,
+                    "justifyContent": "center",
+                    "marginLeft": 8,
+                  }
+                }
+              >
+                <View>
+                  <View
+                    style={
+                      Object {
+                        "alignItems": "center",
+                        "backgroundColor": "transparent",
+                        "justifyContent": "center",
+                      }
+                    }
+                    theme={
+                      Object {
+                        "colors": Object {
+                          "disabled": "hsl(208, 8%, 90%)",
+                          "divider": "#bcbbc1",
+                          "error": "#ff190c",
+                          "grey0": "#393e42",
+                          "grey1": "#43484d",
+                          "grey2": "#5e6977",
+                          "grey3": "#86939e",
+                          "grey4": "#bdc6cf",
+                          "grey5": "#e1e8ee",
+                          "greyOutline": "#bbb",
+                          "platform": Object {
+                            "android": Object {
+                              "error": "#f44336",
+                              "primary": "#2196f3",
+                              "secondary": "#9C27B0",
+                              "success": "#4caf50",
+                              "warning": "#ffeb3b",
+                            },
+                            "ios": Object {
+                              "error": "#ff3b30",
+                              "primary": "#007aff",
+                              "secondary": "#5856d6",
+                              "success": "#4cd964",
+                              "warning": "#ffcc00",
+                            },
+                          },
+                          "primary": "#2089dc",
+                          "searchBg": "#303337",
+                          "secondary": "#8F0CE8",
+                          "success": "#52c41a",
+                          "warning": "#faad14",
+                        },
+                      }
+                    }
+                    underlayColor="white"
+                  >
+                    <Text
+                      allowFontScaling={false}
+                      style={
+                        Array [
+                          Object {
+                            "color": "#86939e",
+                            "fontSize": 18,
+                          },
+                          Object {
+                            "backgroundColor": "transparent",
+                          },
+                          Object {
+                            "fontFamily": "Material Icons",
+                            "fontStyle": "normal",
+                            "fontWeight": "normal",
+                          },
+                          Object {},
+                        ]
+                      }
+                      testID="iconIcon"
+                    >
+                      
+                    </Text>
+                  </View>
+                </View>
+              </View>
+              <TextInput
+                allowFontScaling={true}
+                onBlur={[Function]}
+                onChangeText={[Function]}
+                onClear={[Function]}
+                onFocus={[Function]}
+                onSubmitEditing={[Function]}
+                placeholder="Suche nach bestimmten News"
+                placeholderTextColor="#86939e"
+                platform="default"
+                rejectResponderTermination={true}
+                style={
                   Object {
-                    "left": 16,
-                  },
-                  undefined,
-                ],
-                Object {
-                  "fontFamily": "Material Icons",
-                  "fontStyle": "normal",
-                  "fontWeight": "normal",
-                },
-              ]
-            }
-          >
-            
-          </Text>
-          <Text
-            accessible={true}
-            allowFontScaling={false}
-            ellipsizeMode="tail"
-            onPress={[Function]}
-            style={
-              Array [
-                Object {
-                  "color": "#86939e",
-                  "fontSize": 16,
-                },
-                Array [
+                    "alignSelf": "center",
+                    "color": "#86939e",
+                    "flex": 1,
+                    "fontSize": 18,
+                    "marginLeft": 10,
+                    "minHeight": 40,
+                  }
+                }
+                testID="searchInput"
+                underlineColorAndroid="transparent"
+                value=""
+              />
+              <View
+                style={
                   Object {
-                    "backgroundColor": "transparent",
-                    "position": "absolute",
-                    "top": 15.5,
-                  },
-                  Object {
-                    "right": 16,
-                  },
-                  undefined,
-                ],
-                Object {
-                  "fontFamily": "Material Icons",
-                  "fontStyle": "normal",
-                  "fontWeight": "normal",
-                },
-              ]
-            }
-          >
-            
-          </Text>
+                    "alignItems": "center",
+                    "height": 40,
+                    "justifyContent": "center",
+                    "marginLeft": 15,
+                    "marginRight": 8,
+                  }
+                }
+              >
+                <View
+                  style={
+                    Object {
+                      "flexDirection": "row",
+                    }
+                  }
+                />
+              </View>
+            </View>
+          </View>
         </View>
       </View>
       <View
         onLayout={[Function]}
-        style={null}
       >
         <Text
-          accessible={true}
-          allowFontScaling={true}
-          ellipsizeMode="tail"
           style={
             Object {
               "margin": 10,

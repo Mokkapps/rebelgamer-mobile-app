@@ -33,9 +33,6 @@ exports[`renders correctly 1`] = `
     }
   />
   <Text
-    accessible={true}
-    allowFontScaling={true}
-    ellipsizeMode="tail"
     style={
       Object {
         "color": "black",
@@ -49,9 +46,6 @@ exports[`renders correctly 1`] = `
     title
   </Text>
   <Text
-    accessible={true}
-    allowFontScaling={true}
-    ellipsizeMode="tail"
     style={
       Object {
         "fontSize": 15,

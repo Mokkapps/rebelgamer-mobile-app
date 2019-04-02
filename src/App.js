@@ -1,7 +1,8 @@
-import { Alert, Dimensions, NetInfo, Platform } from 'react-native';
+import { Alert } from 'react-native';
+import NetInfo from '@react-native-community/netinfo';
 import React from 'react';
-import { StackNavigator } from 'react-navigation';
-import Toast from 'react-native-toast-native';
+import { createAppContainer, createStackNavigator } from 'react-navigation';
+import Snackbar from 'react-native-snackbar';
 
 import LatestArticles from './components/LatestArticles';
 import ArticleDetails from './components/ArticleDetails';
@@ -10,22 +11,16 @@ import About from './components/About';
 import translate from './translate';
 import { REBELGAMER_RED } from './constants';
 
-const AppStack = StackNavigator({
+const AppNavigator = createStackNavigator({
   LatestArticles: { screen: LatestArticles },
   ArticleDetails: { screen: ArticleDetails },
   ArticleSearch: { screen: ArticleSearch },
   About: { screen: About }
 });
 
-const NETWORK_FETCH_URL = 'https://google.com';
+const AppContainer = createAppContainer(AppNavigator);
 
-const toastStyle = {
-  backgroundColor: REBELGAMER_RED,
-  color: '#ffffff',
-  height: Platform.OS === 'ios' ? 80 : 140,
-  width: Dimensions.get('window').width - 20,
-  borderRadius: 5
-};
+const NETWORK_FETCH_URL = 'https://google.com';
 
 type Props = {};
 
@@ -61,7 +56,10 @@ export default class App extends React.Component<Props, State> {
   };
 
   showToast = message => {
-    Toast.show(message, Toast.LONG, Toast.CENTER, toastStyle);
+    Snackbar.show({
+      title: message,
+      duration: Snackbar.SHORT
+    });
   };
 
   showErrorAlert = (error: string): void => {
@@ -80,10 +78,11 @@ export default class App extends React.Component<Props, State> {
   };
 
   render() {
+    const { probablyHasInternet } = this.state;
     return (
-      <AppStack
+      <AppContainer
         screenProps={{
-          probablyHasInternet: this.state.probablyHasInternet,
+          probablyHasInternet,
           showErrorAlert: this.showErrorAlert,
           showToast: this.showToast
         }}

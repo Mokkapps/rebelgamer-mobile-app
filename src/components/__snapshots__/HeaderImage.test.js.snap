@@ -2,11 +2,15 @@
 
 exports[`renders correctly 1`] = `
 <Image
-  source={1}
+  source={
+    Object {
+      "testUri": "../../../assets/header.png",
+    }
+  }
   style={
     Object {
       "flex": 1,
-      "height": 40,
+      "height": 30,
       "marginLeft": 0,
       "marginTop": 5,
       "resizeMode": "contain",

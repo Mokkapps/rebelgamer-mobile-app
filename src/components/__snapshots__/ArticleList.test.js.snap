@@ -10,7 +10,6 @@ exports[`renders correctly 1`] = `
 >
   <RCTScrollView
     ListFooterComponent={[Function]}
-    ListHeaderComponent={undefined}
     data={
       Array [
         Object {
@@ -534,7 +533,6 @@ exports[`renders correctly 1`] = `
     getItemCount={[Function]}
     horizontal={false}
     initialNumToRender={10}
-    invertStickyHeaders={undefined}
     keyExtractor={[Function]}
     maxToRenderPerBatch={10}
     numColumns={1}
@@ -549,11 +547,11 @@ exports[`renders correctly 1`] = `
     refreshControl={
       <RefreshControlMock
         onRefresh={[MockFunction]}
-        progressViewOffset={undefined}
         refreshing={true}
       />
     }
     refreshing={true}
+    removeClippedSubviews={false}
     renderItem={[Function]}
     scrollEventThrottle={50}
     stickyHeaderIndices={Array []}
@@ -568,15 +566,8 @@ exports[`renders correctly 1`] = `
         style={null}
       >
         <View
-          accessibilityComponentType={undefined}
-          accessibilityLabel={undefined}
-          accessibilityTraits={undefined}
           accessible={true}
-          hasTVPreferredFocus={undefined}
-          hitSlop={undefined}
           isTVSelectable={true}
-          nativeID={undefined}
-          onLayout={undefined}
           onResponderGrant={[Function]}
           onResponderMove={[Function]}
           onResponderRelease={[Function]}
@@ -584,8 +575,6 @@ exports[`renders correctly 1`] = `
           onResponderTerminationRequest={[Function]}
           onStartShouldSetResponder={[Function]}
           style={null}
-          testID={undefined}
-          tvParallaxProperties={undefined}
         >
           <View
             article={
@@ -1121,9 +1110,6 @@ exports[`renders correctly 1`] = `
               }
             />
             <Text
-              accessible={true}
-              allowFontScaling={true}
-              ellipsizeMode="tail"
               style={
                 Object {
                   "color": "black",
@@ -1137,9 +1123,6 @@ exports[`renders correctly 1`] = `
               DICE beendet den monatlichen Support fuer Battlefield 1 im Juni 2018
             </Text>
             <Text
-              accessible={true}
-              allowFontScaling={true}
-              ellipsizeMode="tail"
               style={
                 Object {
                   "fontSize": 15,
@@ -1147,14 +1130,13 @@ exports[`renders correctly 1`] = `
                 }
               }
             >
-              Vor 3 Tagen
+              Am April 25, 2018
             </Text>
           </View>
         </View>
       </View>
       <View
         onLayout={[Function]}
-        style={null}
       >
         <View>
           <View
@@ -1169,20 +1151,10 @@ exports[`renders correctly 1`] = `
             }
           />
           <View
-            accessibilityComponentType="button"
-            accessibilityLabel={undefined}
-            accessibilityTraits={
-              Array [
-                "button",
-              ]
-            }
+            accessibilityRole="button"
+            accessibilityStates={Array []}
             accessible={true}
-            collapsable={undefined}
-            hasTVPreferredFocus={undefined}
-            hitSlop={undefined}
             isTVSelectable={true}
-            nativeID={undefined}
-            onLayout={undefined}
             onResponderGrant={[Function]}
             onResponderMove={[Function]}
             onResponderRelease={[Function]}
@@ -1194,8 +1166,6 @@ exports[`renders correctly 1`] = `
                 "opacity": 1,
               }
             }
-            testID={undefined}
-            tvParallaxProperties={undefined}
           >
             <View
               style={
@@ -1205,10 +1175,6 @@ exports[`renders correctly 1`] = `
               }
             >
               <Text
-                accessible={true}
-                allowFontScaling={true}
-                disabled={undefined}
-                ellipsizeMode="tail"
                 style={
                   Array [
                     Object {

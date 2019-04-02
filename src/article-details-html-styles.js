@@ -4,7 +4,6 @@ import { HEADLINE_IMAGE_HEIGHT } from './constants';
 const fontSizeParagraph = isTablet() ? 22 : 17;
 
 const ArticleDetailsHtmlStyle = `
-<style>
     body {
         background-color: transparent;
     }
@@ -48,6 +47,5 @@ const ArticleDetailsHtmlStyle = `
         margin-top: 10px;
         margin-bottom: 10px;
     }
-</style>
 `;
 export default ArticleDetailsHtmlStyle;

@@ -12,8 +12,8 @@ import {
 import React from 'react';
 import { NavigationState } from 'react-navigation';
 
-import ArticleListItem from './../components/ArticleListItem';
-import Post from './../wp-types';
+import ArticleListItem from './ArticleListItem';
+import Post from '../wp-types';
 import { REBELGAMER_RED } from '../constants';
 import translate from '../translate';
 
@@ -55,11 +55,14 @@ const styles = StyleSheet.create({
 
 class ArticleList extends React.Component<Props> {
   onTagSelect = tagName => {
-    this.props.onTagSelect(tagName);
+    const { onTagSelect } = this.props;
+    onTagSelect(tagName);
   };
 
   renderFooter = () => {
-    if (!this.props.isLoadingMoreArticles && this.props.posts.length > 0) {
+    const { isLoadingMoreArticles, posts, onLoadMoreArticles, isRefreshing } = this.props;
+
+    if (!isLoadingMoreArticles && posts.length > 0) {
       return (
         <View>
           <View style={styles.separator} />
@@ -67,17 +70,17 @@ class ArticleList extends React.Component<Props> {
             style={styles.loadMoreButton}
             title={translate('LOAD_MORE_ARTICLES')}
             color={REBELGAMER_RED}
-            onPress={this.props.onLoadMoreArticles}
+            onPress={onLoadMoreArticles}
           />
         </View>
       );
     }
 
-    if (this.props.isRefreshing) {
+    if (isRefreshing) {
       return null;
     }
 
-    if (this.props.posts.length === 0) {
+    if (posts.length === 0) {
       return <Text style={styles.noArticlesText}>{translate('FOUND_NO_ARTICLES')}</Text>;
     }
 
@@ -89,11 +92,12 @@ class ArticleList extends React.Component<Props> {
   };
 
   render() {
-    const { navigate } = this.props.navigation;
+    const { navigation, posts, listHeader, isRefreshing, onRefresh } = this.props;
+    const { navigate } = navigation;
     return (
       <View style={styles.container}>
         <FlatList
-          data={this.props.posts}
+          data={posts}
           renderItem={({ item }) => (
             <TouchableHighlight
               underlayColor="lightgray"
@@ -103,12 +107,12 @@ class ArticleList extends React.Component<Props> {
             </TouchableHighlight>
           )}
           keyExtractor={(item: Post) => item.id.toString()}
-          ListHeaderComponent={this.props.listHeader}
+          ListHeaderComponent={listHeader}
           // Necessary to show footer on Android
           // eslint-disable-next-line react/jsx-no-bind
           ListFooterComponent={this.renderFooter.bind(this)}
-          refreshing={this.props.isRefreshing}
-          onRefresh={this.props.onRefresh}
+          refreshing={isRefreshing}
+          onRefresh={onRefresh}
         />
       </View>
     );

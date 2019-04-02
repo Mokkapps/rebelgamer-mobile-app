@@ -11,10 +11,12 @@ export default function fetchPosts(
 ): Promise<typeof Post[]> {
   return axios
     .get(
-      `${WP_BASE_URL}posts?_embed=true&page=${page}&per_page=${POSTS_PER_PAGE}&search=${search}`,
+      `${WP_BASE_URL}posts?_embed=true&page=${page}&per_page=${POSTS_PER_PAGE}&search=${search}&dt=${new Date().getTime()}`,
       { cancelToken }
     )
-    .then(response => response.data)
+    .then(response => {
+      return response.data;
+    })
     .catch(thrown => {
       if (axios.isCancel(thrown)) {
         console.log('Request canceled', thrown.message);
