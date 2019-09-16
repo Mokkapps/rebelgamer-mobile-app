@@ -10,7 +10,7 @@ This repository contains the code of the iOS & Android app of the gaming blog [R
 
 It was developed using [React Native](https://facebook.github.io/react-native/) and uses the WordPress REST API to fetch the posts.
 
-<img src="https://res.cloudinary.com/dvw7amyb4/image/upload/v1554747855/RebelGamer_iOS_Screenshot.png" width="250">
+<img src="https://i.imgur.com/mzkIeby.png" width="250">
 
 # App Store links
 
