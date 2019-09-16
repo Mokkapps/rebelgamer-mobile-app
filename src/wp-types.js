@@ -6,7 +6,7 @@ declare type Post = {
   date_gmt: string,
   guid: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   id: number,
   link: string,
@@ -18,18 +18,18 @@ declare type Post = {
   password?: string,
   title: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   content: {
     raw?: string,
     rendered: string,
-    protected: boolean
+    protected: boolean,
   },
   author: number,
   excerpt: {
     raw?: string,
     rendered: string,
-    protected: boolean
+    protected: boolean,
   },
   featured_media: number,
   comment_status: 'open' | 'closed',
@@ -50,7 +50,7 @@ declare type Post = {
   template: string,
   categories: Array<number>,
   tags: Array<number>,
-  _embedded: Embedded
+  _embedded: Embedded,
 };
 
 declare type PostRevision = {
@@ -59,7 +59,7 @@ declare type PostRevision = {
   date_gmt: string,
   guid: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   id: number,
   modified: string,
@@ -68,18 +68,18 @@ declare type PostRevision = {
   slug: string,
   title: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   content: {
     raw?: string,
     rendered: string,
-    protected: boolean
+    protected: boolean,
   },
   excerpt: {
     raw?: string,
     rendered: string,
-    protected: boolean
-  }
+    protected: boolean,
+  },
 };
 
 declare type Page = {
@@ -87,7 +87,7 @@ declare type Page = {
   date_gmt: string,
   guid: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   id: number,
   link: string,
@@ -100,25 +100,25 @@ declare type Page = {
   parent: number,
   title: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   content: {
     raw?: string,
     rendered: string,
-    protected: boolean
+    protected: boolean,
   },
   author: number,
   excerpt: {
     raw?: string,
     rendered: string,
-    protected: boolean
+    protected: boolean,
   },
   featured_media: number,
   comment_status: 'open' | 'closed',
   ping_status: 'open' | 'closed',
   menu_order: number,
   meta: Object,
-  template: string
+  template: string,
 };
 
 declare type PageRevision = {
@@ -127,7 +127,7 @@ declare type PageRevision = {
   date_gmt: string,
   guid: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   id: number,
   modified: string,
@@ -136,18 +136,18 @@ declare type PageRevision = {
   slug: string,
   title: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   content: {
     raw?: string,
     rendered: string,
-    protected: boolean
+    protected: boolean,
   },
   excerpt: {
     raw?: string,
     rendered: string,
-    protected: boolean
-  }
+    protected: boolean,
+  },
 };
 
 declare type Attachment = {
@@ -155,7 +155,7 @@ declare type Attachment = {
   date_gmt: string,
   guid: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   id: number,
   link: string,
@@ -166,7 +166,7 @@ declare type Attachment = {
   type: string,
   title: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   author: number,
   comment_status: 'open' | 'closed',
@@ -176,17 +176,17 @@ declare type Attachment = {
   alt_text: string,
   caption: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   description: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   media_type: 'image' | 'file',
   mime_type: string,
   media_details: Object,
   post: number,
-  source_url: string
+  source_url: string,
 };
 
 declare type Type = {
@@ -198,7 +198,7 @@ declare type Type = {
   slug: string,
   supports?: Object,
   taxonomies: Array<string>,
-  rest_base: string
+  rest_base: string,
 };
 
 declare type Status = {
@@ -208,7 +208,7 @@ declare type Status = {
   public: boolean,
   queryable: boolean,
   show_in_list?: boolean,
-  slug: string
+  slug: string,
 };
 
 declare type Taxonomy = {
@@ -220,7 +220,7 @@ declare type Taxonomy = {
   slug: string,
   show_cloud?: boolean,
   types: Array<string>,
-  rest_base: string
+  rest_base: string,
 };
 
 declare type Category = {
@@ -237,7 +237,7 @@ declare type Category = {
     | 'link_category'
     | 'post_format',
   parent: number,
-  meta: Object
+  meta: Object,
 };
 
 declare type Tag = {
@@ -253,7 +253,7 @@ declare type Tag = {
     | 'nav_menu'
     | 'link_category'
     | 'post_format',
-  meta: Object
+  meta: Object,
 };
 
 declare type User = {
@@ -277,9 +277,9 @@ declare type User = {
   avatar_urls: {
     '24': string,
     '48': string,
-    '96': string
+    '96': string,
   },
-  meta: Object
+  meta: Object,
 };
 
 declare type Comment = {
@@ -292,7 +292,7 @@ declare type Comment = {
   author_user_agent?: string,
   content: {
     raw?: string,
-    rendered: string
+    rendered: string,
   },
   date: string,
   date_gmt: string,
@@ -304,9 +304,9 @@ declare type Comment = {
   author_avatar_urls: {
     '24': string,
     '48': string,
-    '96': string
+    '96': string,
   },
-  meta: Object
+  meta: Object,
 };
 
 declare type Settings = {
@@ -323,18 +323,18 @@ declare type Settings = {
   posts_per_page: number,
   default_ping_status: 'open' | 'closed',
   default_comment_status: 'open' | 'closed',
-  permalink_structure: string
+  permalink_structure: string,
 };
 
 declare type Embedded = {
   'wp:featuredmedia': Array<Media>,
-  author: Array<Author>
+  author: Array<Author>,
 };
 
 declare type Media = {
-  source_url: string
+  source_url: string,
 };
 
 declare type Author = {
-  name: string
+  name: string,
 };

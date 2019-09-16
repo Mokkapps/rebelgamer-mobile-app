@@ -11,10 +11,12 @@ const styles = StyleSheet.create({
     marginLeft: Platform.OS === 'android' ? 50 : 0,
     marginTop: 5,
     height: 30,
-    resizeMode: 'contain'
-  }
+    resizeMode: 'contain',
+  },
 });
 
-const HeaderImage = () => <Image style={styles.headerImage} source={headerImage} />;
+const HeaderImage = () => (
+  <Image style={styles.headerImage} source={headerImage} />
+);
 
 export default HeaderImage;

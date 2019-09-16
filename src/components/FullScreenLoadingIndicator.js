@@ -7,9 +7,8 @@ export default () => (
   <View
     style={{
       width: Dimensions.get('window').width,
-      height: Dimensions.get('window').height
-    }}
-  >
+      height: Dimensions.get('window').height,
+    }}>
     <ActivityIndicator
       style={{
         position: 'absolute',
@@ -18,7 +17,7 @@ export default () => (
         top: 0,
         bottom: 0,
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
       }}
       color={REBELGAMER_RED}
       animating

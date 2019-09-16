@@ -2,7 +2,7 @@
 
 import React from 'react';
 import { NavigationState } from 'react-navigation';
-import HeaderButtons, { Item } from 'react-navigation-header-buttons';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import AsyncStorage from '@react-native-community/async-storage';
 import axios, { CancelTokenSource } from 'axios';
 
@@ -20,15 +20,15 @@ type Props = {
   screenProps: {
     probablyHasInternet: boolean | undefined,
     showErrorAlert: Function,
-    showToast: Function
-  }
+    showToast: Function,
+  },
 };
 
 type State = {
   isLoadingMoreArticles: boolean,
   page: number,
   posts: typeof Post[],
-  isRefreshing: boolean
+  isRefreshing: boolean,
 };
 
 class LatestArticles extends React.Component<Props, State> {
@@ -39,10 +39,18 @@ class LatestArticles extends React.Component<Props, State> {
       headerTitle: <HeaderImage />,
       headerRight: (
         <HeaderButtons HeaderButtonComponent={HeaderButton} color="black">
-          <Item title="Search" iconName="search" onPress={() => navigate('ArticleSearch')} />
-          <Item title="About" iconName="info-outline" onPress={() => navigate('About')} />
+          <Item
+            title="Search"
+            iconName="search"
+            onPress={() => navigate('ArticleSearch')}
+          />
+          <Item
+            title="About"
+            iconName="info-outline"
+            onPress={() => navigate('About')}
+          />
         </HeaderButtons>
-      )
+      ),
     };
   };
 
@@ -53,12 +61,21 @@ class LatestArticles extends React.Component<Props, State> {
       isLoadingMoreArticles: false,
       page: 1,
       posts: [],
-      isRefreshing: true
+      isRefreshing: true,
     };
   }
 
-  componentWillReceiveProps() {
+  componentDidMount() {
     this.loadPosts();
+  }
+
+  componentDidUpdate(prevProps) {
+    if (
+      this.props.screenProps.probablyHasInternet !==
+      prevProps.screenProps.probablyHasInternet
+    ) {
+      this.loadPosts();
+    }
   }
 
   componentWillUnmount() {
@@ -81,20 +98,20 @@ class LatestArticles extends React.Component<Props, State> {
   loadPosts = (
     page: number = 1,
     isLoadingMoreArticles: boolean = false,
-    isRefreshing: boolean = true
+    isRefreshing: boolean = true,
   ) => {
     const { screenProps } = this.props;
     this.setState(
       {
         page,
         isLoadingMoreArticles,
-        isRefreshing
+        isRefreshing,
       },
       () => {
         this._fetchPosts()
           .then(posts => this.handleFetchedPosts(posts))
           .catch(err => screenProps.showErrorAlert(err));
-      }
+      },
     );
   };
 
@@ -135,7 +152,7 @@ class LatestArticles extends React.Component<Props, State> {
     this.setState({
       posts: newPosts,
       isLoadingMoreArticles: false,
-      isRefreshing: false
+      isRefreshing: false,
     });
 
     AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newPosts))

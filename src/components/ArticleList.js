@@ -7,7 +7,7 @@ import {
   StyleSheet,
   Text,
   TouchableHighlight,
-  View
+  View,
 } from 'react-native';
 import React from 'react';
 import { NavigationState } from 'react-navigation';
@@ -25,32 +25,32 @@ type Props = {
   onLoadMoreArticles: Function,
   isRefreshing: boolean,
   isLoadingMoreArticles: boolean,
-  listHeader: any
+  listHeader: any,
 };
 
 const styles = StyleSheet.create({
   container: {
-    flex: 1
+    flex: 1,
   },
   separator: {
     height: 1,
     backgroundColor: '#CED0CE',
     marginLeft: 10,
     marginRight: 10,
-    marginTop: 10
+    marginTop: 10,
   },
   footer: {
     paddingVertical: 20,
     borderTopWidth: 1,
-    borderColor: '#CED0CE'
+    borderColor: '#CED0CE',
   },
   loadMoreButton: {
-    margin: 10
+    margin: 10,
   },
   noArticlesText: {
     textAlign: 'center',
-    margin: 10
-  }
+    margin: 10,
+  },
 });
 
 class ArticleList extends React.Component<Props> {
@@ -60,7 +60,12 @@ class ArticleList extends React.Component<Props> {
   };
 
   renderFooter = () => {
-    const { isLoadingMoreArticles, posts, onLoadMoreArticles, isRefreshing } = this.props;
+    const {
+      isLoadingMoreArticles,
+      posts,
+      onLoadMoreArticles,
+      isRefreshing,
+    } = this.props;
 
     if (!isLoadingMoreArticles && posts.length > 0) {
       return (
@@ -81,7 +86,11 @@ class ArticleList extends React.Component<Props> {
     }
 
     if (posts.length === 0) {
-      return <Text style={styles.noArticlesText}>{translate('FOUND_NO_ARTICLES')}</Text>;
+      return (
+        <Text style={styles.noArticlesText}>
+          {translate('FOUND_NO_ARTICLES')}
+        </Text>
+      );
     }
 
     return (
@@ -92,7 +101,13 @@ class ArticleList extends React.Component<Props> {
   };
 
   render() {
-    const { navigation, posts, listHeader, isRefreshing, onRefresh } = this.props;
+    const {
+      navigation,
+      posts,
+      listHeader,
+      isRefreshing,
+      onRefresh,
+    } = this.props;
     const { navigate } = navigation;
     return (
       <View style={styles.container}>
@@ -101,8 +116,7 @@ class ArticleList extends React.Component<Props> {
           renderItem={({ item }) => (
             <TouchableHighlight
               underlayColor="lightgray"
-              onPress={() => navigate('ArticleDetails', { article: item })}
-            >
+              onPress={() => navigate('ArticleDetails', { article: item })}>
               <ArticleListItem article={item} />
             </TouchableHighlight>
           )}

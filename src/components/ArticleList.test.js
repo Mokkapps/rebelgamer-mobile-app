@@ -16,7 +16,7 @@ it('renders correctly', () => {
         isLoadingMoreArticles={false}
         onRefresh={jest.fn()}
         onLoadMoreArticles={jest.fn()}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();

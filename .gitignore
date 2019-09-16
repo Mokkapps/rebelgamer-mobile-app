@@ -9,6 +9,7 @@
 *.keystore
 /android/build
 /android/app/build
+/android/app/release
 
 # Xcode
 !**/*.xcodeproj
@@ -71,3 +72,6 @@ local.properties
 
 /coverage
 /third-party
+
+# CocoaPods
+/ios/Pods/

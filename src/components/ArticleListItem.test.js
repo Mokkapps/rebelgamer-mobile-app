@@ -10,9 +10,9 @@ it('renders correctly', () => {
         article={{
           id: 124,
           title: { rendered: 'title' },
-          _embedded: { 'wp:featuredmedia': [{ source_url: 'URL' }] }
+          _embedded: { 'wp:featuredmedia': [{ source_url: 'URL' }] },
         }}
-      />
+      />,
     )
     .toJSON();
   expect(tree).toMatchSnapshot();

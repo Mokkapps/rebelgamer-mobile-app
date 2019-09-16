@@ -7,11 +7,11 @@ import translate from '../translate';
 
 type Props = {
   isLoading: boolean,
-  onSubmit: Function
+  onSubmit: Function,
 };
 
 type State = {
-  searchText: string
+  searchText: string,
 };
 
 export default class HeaderSearchBar extends Component<Props, State> {
@@ -19,7 +19,7 @@ export default class HeaderSearchBar extends Component<Props, State> {
     super();
 
     this.state = {
-      searchText: ''
+      searchText: '',
     };
   }
 

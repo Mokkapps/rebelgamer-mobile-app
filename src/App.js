@@ -1,7 +1,8 @@
 import { Alert } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import React from 'react';
-import { createAppContainer, createStackNavigator } from 'react-navigation';
+import { createAppContainer } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation-stack';
 import Snackbar from 'react-native-snackbar';
 
 import LatestArticles from './components/LatestArticles';
@@ -15,7 +16,7 @@ const AppNavigator = createStackNavigator({
   LatestArticles: { screen: LatestArticles },
   ArticleDetails: { screen: ArticleDetails },
   ArticleSearch: { screen: ArticleSearch },
-  About: { screen: About }
+  About: { screen: About },
 });
 
 const AppContainer = createAppContainer(AppNavigator);
@@ -25,25 +26,31 @@ const NETWORK_FETCH_URL = 'https://google.com';
 type Props = {};
 
 type State = {
-  probablyHasInternet: boolean | undefined
+  probablyHasInternet: boolean | undefined,
 };
 
-export default class App extends React.Component<Props, State> {
+class App extends React.Component<Props, State> {
   constructor(props: Props) {
     super(props);
 
     this.state = {
-      probablyHasInternet: undefined
+      probablyHasInternet: true,
     };
 
-    NetInfo.addEventListener('connectionChange', this.handleConnectivityChange);
+    NetInfo.addEventListener(state => {
+      if (!state.isConnected) {
+        this.setState({ probablyHasInternet: false });
+        return;
+      }
+      this.handleConnectivityChange();
+    });
   }
 
   async componentDidMount() {
     await NetInfo.getConnectionInfo().then(this.handleConnectivityChange);
   }
 
-  handleConnectivityChange = async () => {
+  handleConnectivityChange = async state => {
     let probablyHasInternet;
     try {
       const googleCall = await fetch(NETWORK_FETCH_URL);
@@ -58,7 +65,7 @@ export default class App extends React.Component<Props, State> {
   showToast = message => {
     Snackbar.show({
       title: message,
-      duration: Snackbar.SHORT
+      duration: Snackbar.SHORT,
     });
   };
 
@@ -69,10 +76,10 @@ export default class App extends React.Component<Props, State> {
       [
         {
           text: translate('OK'),
-          style: 'cancel'
-        }
+          style: 'cancel',
+        },
       ],
-      { cancelable: false }
+      { cancelable: false },
     );
     console.error(error);
   };
@@ -84,9 +91,11 @@ export default class App extends React.Component<Props, State> {
         screenProps={{
           probablyHasInternet,
           showErrorAlert: this.showErrorAlert,
-          showToast: this.showToast
+          showToast: this.showToast,
         }}
       />
     );
   }
 }
+
+export default App;

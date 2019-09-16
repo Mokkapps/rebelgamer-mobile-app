@@ -8,12 +8,12 @@ import {
   ScrollView,
   Share,
   StyleSheet,
-  View
+  View,
 } from 'react-native';
 import { Badge } from 'react-native-elements';
 import AutoHeightWebView from 'react-native-autoheight-webview';
-import HeaderButtons, { Item } from 'react-navigation-header-buttons';
-import React from 'react';
+import { HeaderButtons, Item } from 'react-navigation-header-buttons';
+import React, { Fragment } from 'react';
 
 import ArticleDetailsHeader from './ArticleDetailsHeader';
 import HeaderButton from './HeaderButton';
@@ -30,40 +30,36 @@ type Props = {
     navigate: Object,
     params: {
       handleShare: Function,
-      handleOpenInBrowser: Function
+      handleOpenInBrowser: Function,
     },
     state: {
       params: {
-        article: typeof Post
-      }
-    }
-  }
+        article: typeof Post,
+      },
+    },
+  },
 };
 
 type State = {
-  isLoading: boolean
+  isLoading: boolean,
 };
 
 const styles = StyleSheet.create({
   separator: {
     height: 1,
     backgroundColor: '#CED0CE',
-    margin: 5
+    margin: 5,
   },
   tagList: {
     flex: 1,
     flexDirection: 'row',
     flexWrap: 'wrap',
     justifyContent: 'space-around',
-    margin: 5
+    margin: 5,
   },
   webview: {
-    width: Dimensions.get('window').width - 10,
-    marginTop: 10,
-    marginLeft: 10,
-    marginBottom: 10,
-    backgroundColor: 'transparent'
-  }
+    padding: 10,
+  },
 });
 
 class ArticleDetails extends React.Component<Props, State> {
@@ -75,7 +71,9 @@ class ArticleDetails extends React.Component<Props, State> {
       title: '',
       headerTintColor: REBELGAMER_RED,
       headerRight: (
-        <HeaderButtons HeaderButtonComponent={HeaderButton} color={REBELGAMER_RED}>
+        <HeaderButtons
+          HeaderButtonComponent={HeaderButton}
+          color={REBELGAMER_RED}>
           <Item
             title="Open In Browser"
             iconName="open-in-browser"
@@ -89,7 +87,7 @@ class ArticleDetails extends React.Component<Props, State> {
             onPress={() => params.handleShare()}
           />
         </HeaderButtons>
-      )
+      ),
     };
   };
 
@@ -97,7 +95,7 @@ class ArticleDetails extends React.Component<Props, State> {
     super(props);
 
     this.state = {
-      isLoading: true
+      isLoading: true,
     };
   }
 
@@ -121,7 +119,10 @@ class ArticleDetails extends React.Component<Props, State> {
 
     if (Platform.OS === 'android') {
       const { article } = navigation.state.params;
-      if (event.url !== article.link && event.url !== 'file:///android_asset/') {
+      if (
+        event.url !== article.link &&
+        event.url !== 'file:///android_asset/'
+      ) {
         await this.openUrl(event.url);
       }
     }
@@ -144,12 +145,12 @@ class ArticleDetails extends React.Component<Props, State> {
       {
         message: `${decodeHtml(article.title.rendered)} - ${article.link}`,
         title: appName,
-        url: article.link
+        url: article.link,
       },
       {
         // Android only:
-        dialogTitle: translate('SHARE_DIALOG_TITLE')
-      }
+        dialogTitle: translate('SHARE_DIALOG_TITLE'),
+      },
     );
   };
 
@@ -173,7 +174,8 @@ class ArticleDetails extends React.Component<Props, State> {
     const { article } = navigation.state.params;
     const tags = article._embedded['wp:term'][1].map(tag => (
       <Badge
-        badgeStyle={{ margin: 7, backgroundColor: REBELGAMER_RED }}
+        containerStyle={{ margin: 7 }}
+        badgeStyle={{ backgroundColor: REBELGAMER_RED }}
         key={tag.id}
         value={tag.name || ''}
         textStyle={{ color: 'white' }}
@@ -186,20 +188,27 @@ class ArticleDetails extends React.Component<Props, State> {
       <ScrollView>
         <ArticleDetailsHeader article={article} />
         <View style={styles.separator} />
-        <AutoHeightWebView
-          style={styles.webview}
-          scrollEnabled={false}
-          baseUrl={Platform.OS === 'android' ? 'file:///android_asset/' : ''}
-          customStyle={ArticleDetailsHtmlStyle}
-          source={{
-            html: article.content.rendered
-          }}
-          onLoadEnd={this.stopLoading}
-          startInLoadingState
-          renderLoading={() => <ActivityIndicator color={REBELGAMER_RED} size="large" />}
-          onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
-          onNavigationStateChange={this.onShouldStartLoadWithRequest}
-        />
+        <View style={styles.webview}>
+          <AutoHeightWebView
+            scrollEnabled={false}
+            // default width is the width of screen
+            // if there are some text selection issues on iOS, the width should be reduced more than 15
+            style={{
+              width: Dimensions.get('window').width - 15,
+            }}
+            customStyle={ArticleDetailsHtmlStyle}
+            source={{
+              html: article.content.rendered,
+            }}
+            onLoadEnd={this.stopLoading}
+            startInLoadingState
+            renderLoading={() => (
+              <ActivityIndicator color={REBELGAMER_RED} size="large" />
+            )}
+            onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
+            onNavigationStateChange={this.onShouldStartLoadWithRequest}
+          />
+        </View>
         {!isLoading && (
           <View>
             <View style={styles.separator} />

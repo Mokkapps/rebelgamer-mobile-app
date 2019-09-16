@@ -18,22 +18,24 @@ type Props = {
   screenProps: {
     probablyHasInternet: boolean | undefined,
     showErrorAlert: Function,
-    showToast: Function
-  }
+    showToast: Function,
+  },
 };
 
 type State = {
   isLoading: boolean,
   page: number,
-  posts: typeof Post[]
+  posts: typeof Post[],
 };
 
 class ArticleSearch extends React.Component<Props, State> {
   static navigationOptions = ({ navigation }) => {
     const { state } = navigation;
     return {
-      headerTitle: state.params ? state.params.title : translate('SEARCH_TITLE'),
-      headerTintColor: REBELGAMER_RED
+      headerTitle: state.params
+        ? state.params.title
+        : translate('SEARCH_TITLE'),
+      headerTintColor: REBELGAMER_RED,
     };
   };
 
@@ -42,27 +44,31 @@ class ArticleSearch extends React.Component<Props, State> {
 
     const { navigation } = this.props;
 
-    if (navigation.state && navigation.state.params && navigation.state.params.tagName) {
+    if (
+      navigation.state &&
+      navigation.state.params &&
+      navigation.state.params.tagName
+    ) {
       this.query = navigation.state.params.tagName;
     }
 
     this.state = {
       isLoading: false,
       page: 1,
-      posts: []
+      posts: [],
     };
+  }
+
+  static getDerivedStateFromProps(props, state) {
+    const { screenProps } = props;
+    if (!screenProps.probablyHasInternet) {
+      screenProps.showErrorAlert(translate('NO_INTERNET_CONNECTION'));
+    }
   }
 
   componentDidMount() {
     if (this.query) {
       this.loadPosts(1, this.query);
-    }
-  }
-
-  componentWillReceiveProps() {
-    const { screenProps } = this.props;
-    if (!screenProps.probablyHasInternet) {
-      screenProps.showErrorAlert(translate('NO_INTERNET_CONNECTION'));
     }
   }
 
@@ -104,7 +110,7 @@ class ArticleSearch extends React.Component<Props, State> {
 
     this.setState({
       posts: newPosts,
-      isLoading: false
+      isLoading: false,
     });
   };
 
@@ -125,13 +131,13 @@ class ArticleSearch extends React.Component<Props, State> {
     this.setState(
       {
         page,
-        isLoading: true
+        isLoading: true,
       },
       () => {
         this._fetchPosts(searchText)
           .then(posts => this.handleFetchedPosts(posts))
           .catch(err => screenProps.showErrorAlert(err));
-      }
+      },
     );
   };
 
