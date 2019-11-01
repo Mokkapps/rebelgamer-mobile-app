@@ -206,7 +206,6 @@ class ArticleDetails extends React.Component<Props, State> {
               <ActivityIndicator color={REBELGAMER_RED} size="large" />
             )}
             onShouldStartLoadWithRequest={this.onShouldStartLoadWithRequest}
-            onNavigationStateChange={this.onShouldStartLoadWithRequest}
           />
         </View>
         {!isLoading && (

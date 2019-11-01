@@ -1,4 +1,5 @@
-import { Alert } from 'react-native';
+import 'react-native-gesture-handler';
+import {Alert, Platform} from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
 import React from 'react';
 import { createAppContainer } from 'react-navigation';
@@ -10,7 +11,6 @@ import ArticleDetails from './components/ArticleDetails';
 import ArticleSearch from './components/ArticleSearch';
 import About from './components/About';
 import translate from './translate';
-import { REBELGAMER_RED } from './constants';
 
 const AppNavigator = createStackNavigator({
   LatestArticles: { screen: LatestArticles },
@@ -20,8 +20,6 @@ const AppNavigator = createStackNavigator({
 });
 
 const AppContainer = createAppContainer(AppNavigator);
-
-const NETWORK_FETCH_URL = 'https://google.com';
 
 type Props = {};
 
@@ -36,31 +34,19 @@ class App extends React.Component<Props, State> {
     this.state = {
       probablyHasInternet: true,
     };
+  }
 
+  componentDidMount(): void {
+    let initialNetworkState = false;
     NetInfo.addEventListener(state => {
-      if (!state.isConnected) {
-        this.setState({ probablyHasInternet: false });
+      if (Platform.OS === 'ios' && !initialNetworkState) {
+        initialNetworkState = true;
         return;
       }
-      this.handleConnectivityChange();
+      const probablyHasInternet = state.isConnected && state.isInternetReachable;
+      this.setState({ probablyHasInternet });
     });
   }
-
-  async componentDidMount() {
-    await NetInfo.getConnectionInfo().then(this.handleConnectivityChange);
-  }
-
-  handleConnectivityChange = async state => {
-    let probablyHasInternet;
-    try {
-      const googleCall = await fetch(NETWORK_FETCH_URL);
-      probablyHasInternet = googleCall.status === 200;
-    } catch (e) {
-      probablyHasInternet = false;
-    }
-
-    this.setState({ probablyHasInternet });
-  };
 
   showToast = message => {
     Snackbar.show({
