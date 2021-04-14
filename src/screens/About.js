@@ -54,16 +54,13 @@ const styles = StyleSheet.create({
   },
 });
 
-type Props = {};
-type State = {};
+const About = () => {
+  //FIXME  static navigationOptions = {
+  //   title: '',
+  //   headerTintColor: REBELGAMER_RED,
+  // };
 
-class About extends React.Component<Props, State> {
-  static navigationOptions = {
-    title: '',
-    headerTintColor: REBELGAMER_RED,
-  };
-
-  onPressContact = () => {
+  const onPressContact = () => {
     const os = Platform.OS === 'ios' ? 'iOS' : 'Android';
     const to = [MOKKAPPS_MAIL, REBELGAMER_MAIL];
     email(to, {
@@ -71,7 +68,7 @@ class About extends React.Component<Props, State> {
     }).catch(console.error);
   };
 
-  onPressRate = async () => {
+  const onPressRate = async () => {
     if (Platform.OS === 'ios') {
       await Linking.openURL(APP_STORE_URL);
     } else {
@@ -79,32 +76,30 @@ class About extends React.Component<Props, State> {
     }
   };
 
-  render() {
-    return (
-      <View style={styles.container}>
-        <Image style={styles.image} source={TV_IMAGE} />
-        <Text h3 style={styles.appName}>
-          {translate('APP_NAME')}
-        </Text>
-        <Text>{`${translate('VERSION')} ${version}`}</Text>
-        <Text style={styles.description}>{translate('APP_DESCRIPTION')}</Text>
-        <View style={styles.button}>
-          <Button
-            title={translate('CONTACT_US')}
-            color={REBELGAMER_RED}
-            onPress={this.onPressContact}
-          />
-        </View>
-        <View style={styles.button}>
-          <Button
-            title={translate('RATE_APP')}
-            color={REBELGAMER_RED}
-            onPress={this.onPressRate}
-          />
-        </View>
+  return (
+    <View style={styles.container}>
+      <Image style={styles.image} source={TV_IMAGE} />
+      <Text h3 style={styles.appName}>
+        {translate('APP_NAME')}
+      </Text>
+      <Text>{`${translate('VERSION')} ${version}`}</Text>
+      <Text style={styles.description}>{translate('APP_DESCRIPTION')}</Text>
+      <View style={styles.button}>
+        <Button
+          title={translate('CONTACT_US')}
+          color={REBELGAMER_RED}
+          onPress={onPressContact}
+        />
       </View>
-    );
-  }
-}
+      <View style={styles.button}>
+        <Button
+          title={translate('RATE_APP')}
+          color={REBELGAMER_RED}
+          onPress={onPressRate}
+        />
+      </View>
+    </View>
+  );
+};
 
 export default About;

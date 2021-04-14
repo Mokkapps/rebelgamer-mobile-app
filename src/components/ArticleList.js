@@ -53,20 +53,22 @@ const styles = StyleSheet.create({
   },
 });
 
-class ArticleList extends React.Component<Props> {
-  onTagSelect = tagName => {
-    const { onTagSelect } = this.props;
+const ArticleList = ({
+  navigation,
+  posts,
+  listHeader,
+  isRefreshing,
+  onRefresh,
+  isLoadingMoreArticles,
+  onLoadMoreArticles,
+}): Props => {
+  const { navigate } = navigation;
+
+  const onTagSelect = tagName => {
     onTagSelect(tagName);
   };
 
-  renderFooter = () => {
-    const {
-      isLoadingMoreArticles,
-      posts,
-      onLoadMoreArticles,
-      isRefreshing,
-    } = this.props;
-
+  const renderFooter = () => {
     if (!isLoadingMoreArticles && posts.length > 0) {
       return (
         <View>
@@ -100,37 +102,26 @@ class ArticleList extends React.Component<Props> {
     );
   };
 
-  render() {
-    const {
-      navigation,
-      posts,
-      listHeader,
-      isRefreshing,
-      onRefresh,
-    } = this.props;
-    const { navigate } = navigation;
-    return (
-      <View style={styles.container}>
-        <FlatList
-          data={posts}
-          renderItem={({ item }) => (
-            <TouchableHighlight
-              underlayColor="lightgray"
-              onPress={() => navigate('ArticleDetails', { article: item })}>
-              <ArticleListItem article={item} />
-            </TouchableHighlight>
-          )}
-          keyExtractor={(item: Post) => item.id.toString()}
-          ListHeaderComponent={listHeader}
-          // Necessary to show footer on Android
-          // eslint-disable-next-line react/jsx-no-bind
-          ListFooterComponent={this.renderFooter.bind(this)}
-          refreshing={isRefreshing}
-          onRefresh={onRefresh}
-        />
-      </View>
-    );
-  }
-}
+  return (
+    <View style={styles.container}>
+      <FlatList
+        data={posts}
+        renderItem={({ item }) => (
+          <TouchableHighlight
+            underlayColor="lightgray"
+            onPress={() => navigate('ArticleDetails', { article: item })}>
+            <ArticleListItem article={item} />
+          </TouchableHighlight>
+        )}
+        keyExtractor={(item: Post) => item.id.toString()}
+        ListHeaderComponent={listHeader}
+        // Necessary to show footer on Android
+        ListFooterComponent={renderFooter}
+        refreshing={isRefreshing}
+        onRefresh={onRefresh}
+      />
+    </View>
+  );
+};
 
 export default ArticleList;

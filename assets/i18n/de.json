@@ -10,6 +10,7 @@
     "Keine Internetverbindung, Aktualisierung nicht möglich. Zeige gespeicherte News.",
   "OK": "OK",
   "NO_INTERNET_CONNECTION": "Keine Internetverbindung, Suche nicht möglich.",
+  "ERROR_LOADING_POSTS": "Es ist ein Fehler beim Laden der News aufgetreten. Zeige gespeicherte News.",
   "SEARCH_TITLE": "Suche",
   "VERSION": "Version:",
   "CONTACT_US": "Kontaktiere uns",

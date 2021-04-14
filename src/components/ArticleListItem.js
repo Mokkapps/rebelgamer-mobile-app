@@ -1,6 +1,6 @@
 // @flow
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
-import React from 'react';
+import React, { useRef, useEffect } from 'react';
 
 import Post from '../wp-types';
 import {
@@ -34,34 +34,28 @@ const styles = StyleSheet.create({
   },
 });
 
-class ArticleListItem extends React.PureComponent<Props> {
-  setNativeProps = (nativeProps: Props) => {
-    if (this.root) {
-      this.root.setNativeProps(nativeProps);
-    }
-  };
+const ArticleListItem = (props: Props) => {
+  let root = useRef(null);
 
-  getArticleImage = (article: Post) =>
+  useEffect(() => {
+    if (!root.current) {
+      return;
+    }
+    root.current.setNativeProps(props);
+  }, [props, root.current]);
+
+  const { article } = props;
+
+  const getArticleImage = (article: Post) =>
     article._embedded['wp:featuredmedia'][0].source_url;
 
-  root: View | null;
-
-  render() {
-    const { article } = this.props;
-    return (
-      // eslint-disable-next-line no-return-assign
-      <View ref={component => (this.root = component)} {...this.props}>
-        <Image
-          style={styles.image}
-          source={{ uri: this.getArticleImage(article) }}
-        />
-        <Text style={styles.headline}>
-          {decodeHtml(article.title.rendered)}
-        </Text>
-        <Text style={styles.date}>{getPostedAtDateString(article.date)}</Text>
-      </View>
-    );
-  }
-}
+  return (
+    <View ref={component => (root = component)} {...props}>
+      <Image style={styles.image} source={{ uri: getArticleImage(article) }} />
+      <Text style={styles.headline}>{decodeHtml(article.title.rendered)}</Text>
+      <Text style={styles.date}>{getPostedAtDateString(article.date)}</Text>
+    </View>
+  );
+};
 
 export default ArticleListItem;

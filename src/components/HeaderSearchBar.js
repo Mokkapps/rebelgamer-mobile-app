@@ -1,6 +1,6 @@
 // @flow
 
-import React, { Component } from 'react';
+import React, { useState } from 'react';
 import { SearchBar } from 'react-native-elements';
 
 import translate from '../translate';
@@ -10,36 +10,24 @@ type Props = {
   onSubmit: Function,
 };
 
-type State = {
-  searchText: string,
-};
+const HeaderSearchBar = ({ isLoading, onSubmit }): Props => {
+  const [searchText, setSearchText] = useState('');
 
-export default class HeaderSearchBar extends Component<Props, State> {
-  constructor() {
-    super();
-
-    this.state = {
-      searchText: '',
-    };
-  }
-
-  onChangeText = (value: string) => {
-    this.setState({ searchText: value });
+  const onChangeText = (value: string) => {
+    setSearchText(value);
   };
 
-  render() {
-    const { isLoading, onSubmit } = this.props;
-    const { searchText } = this.state;
-    return (
-      <SearchBar
-        lightTheme
-        onChangeText={text => this.onChangeText(text)}
-        onSubmitEditing={event => onSubmit(event)}
-        clearIcon={searchText !== ''}
-        placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
-        showLoading={isLoading}
-        value={searchText}
-      />
-    );
-  }
-}
+  return (
+    <SearchBar
+      lightTheme
+      onChangeText={text => onChangeText(text)}
+      onSubmitEditing={event => onSubmit(event)}
+      clearIcon={searchText !== ''}
+      placeholder={translate('PLACEHOLDER_SEARCH_BAR')}
+      showLoading={isLoading}
+      value={searchText}
+    />
+  );
+};
+
+export default HeaderSearchBar;

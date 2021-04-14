@@ -1,87 +1,69 @@
 import 'react-native-gesture-handler';
-import {Alert, Platform} from 'react-native';
+import { Platform } from 'react-native';
 import NetInfo from '@react-native-community/netinfo';
-import React from 'react';
-import { createAppContainer } from 'react-navigation';
-import { createStackNavigator } from 'react-navigation-stack';
-import Snackbar from 'react-native-snackbar';
+import React, { useEffect, useState } from 'react';
+import { OverflowMenuProvider } from 'react-navigation-header-buttons';
+import { createStackNavigator } from '@react-navigation/stack';
+import { NavigationContainer } from '@react-navigation/native';
 
-import LatestArticles from './components/LatestArticles';
-import ArticleDetails from './components/ArticleDetails';
-import ArticleSearch from './components/ArticleSearch';
-import About from './components/About';
-import translate from './translate';
+import LatestArticles from './screens/LatestArticles';
+import { InternetContext } from './context/InternetContext';
+import About from './screens/About';
+import ArticleDetails from './screens/ArticleDetails';
+import ArticleSearch from './screens/ArticleSearch';
 
-const AppNavigator = createStackNavigator({
-  LatestArticles: { screen: LatestArticles },
-  ArticleDetails: { screen: ArticleDetails },
-  ArticleSearch: { screen: ArticleSearch },
-  About: { screen: About },
-});
+const App = () => {
+  const [probablyHasInternet, setProbablyHasInternet] = useState(true);
 
-const AppContainer = createAppContainer(AppNavigator);
-
-type Props = {};
-
-type State = {
-  probablyHasInternet: boolean | undefined,
-};
-
-class App extends React.Component<Props, State> {
-  constructor(props: Props) {
-    super(props);
-
-    this.state = {
-      probablyHasInternet: true,
-    };
-  }
-
-  componentDidMount(): void {
+  useEffect(() => {
     let initialNetworkState = false;
-    NetInfo.addEventListener(state => {
+    const unsubscribe = NetInfo.addEventListener(state => {
       if (Platform.OS === 'ios' && !initialNetworkState) {
         initialNetworkState = true;
         return;
       }
-      const probablyHasInternet = state.isConnected && state.isInternetReachable;
-      this.setState({ probablyHasInternet });
+      setProbablyHasInternet(state.isConnected && state.isInternetReachable);
     });
-  }
 
-  showToast = message => {
-    Snackbar.show({
-      title: message,
-      duration: Snackbar.SHORT,
-    });
+    return () => {
+      unsubscribe && unsubscribe();
+    };
+  }, []);
+
+  const screens = {
+    LatestArticles,
+    ArticleDetails,
+    ArticleSearch,
+    About,
   };
 
-  showErrorAlert = (error: string): void => {
-    Alert.alert(
-      translate('ALERT_TITLE'),
-      `${translate('ALERT_MESSAGE')} ${error}`,
-      [
-        {
-          text: translate('OK'),
-          style: 'cancel',
-        },
-      ],
-      { cancelable: false },
-    );
-    console.error(error);
-  };
+  const Stack = createStackNavigator();
 
-  render() {
-    const { probablyHasInternet } = this.state;
+  const Body = () => {
     return (
-      <AppContainer
-        screenProps={{
-          probablyHasInternet,
-          showErrorAlert: this.showErrorAlert,
-          showToast: this.showToast,
-        }}
-      />
+      <InternetContext.Provider value={{ probablyHasInternet }}>
+        <Stack.Navigator initialRouteName="LatestArticles">
+          {Object.keys(screens).map(screenName => {
+            return (
+              <Stack.Screen
+                name={screenName}
+                key={screenName}
+                component={screens[screenName]}
+              />
+            );
+          })}
+        </Stack.Navigator>
+      </InternetContext.Provider>
     );
-  }
-}
+  };
+
+  return (
+    <NavigationContainer>
+      <OverflowMenuProvider>
+        <Body />
+      </OverflowMenuProvider>
+    </NavigationContainer>
+  );
+};
 
 export default App;

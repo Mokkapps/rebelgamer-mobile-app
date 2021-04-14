@@ -34,31 +34,28 @@ const styles = StyleSheet.create({
   },
 });
 
-class ArticleDetailsHeader extends React.PureComponent<Props> {
-  getDateAndAuthor = (article: typeof Post) =>
+const ArticleDetailsHeader = ({ article }): Props => {
+  const getDateAndAuthor = (article: typeof Post) =>
     `${moment(article.date).format('DD.MM.YYYY, HH:mm')} | von ${
       article._embedded.author[0].name
     }`;
 
-  getArticleImage = (article: typeof Post) =>
+  const getArticleImage = (article: typeof Post) =>
     article._embedded['wp:featuredmedia'][0].source_url;
 
-  render() {
-    const { article } = this.props;
-    return [
-      <Image
-        key="image"
-        style={styles.image}
-        source={{ uri: this.getArticleImage(article) }}
-      />,
-      <Text key="headline" style={styles.headline}>
-        {decodeHtml(article.title.rendered)}
-      </Text>,
-      <Text key="date-and-author" style={styles.author}>
-        {this.getDateAndAuthor(article)}
-      </Text>,
-    ];
-  }
-}
+  return [
+    <Image
+      key="image"
+      style={styles.image}
+      source={{ uri: getArticleImage(article) }}
+    />,
+    <Text key="headline" style={styles.headline}>
+      {decodeHtml(article.title.rendered)}
+    </Text>,
+    <Text key="date-and-author" style={styles.author}>
+      {getDateAndAuthor(article)}
+    </Text>,
+  ];
+};
 
 export default ArticleDetailsHeader;
