@@ -47,10 +47,10 @@ $ npm ios-release
 ## Android
 * Place your keystore in root folder
 * Enter your keystore password in ./android/gradle.properties
-* Run ```cd android && ./gradlew assembleRelease```
+* In Android Studio, select `Build => Generate Signed Bundle / APK`
 
 # Report a bug
-Please create a [GitHub issue](https://github.com/MrMojo86/RebelGamer/issues)
+Please create a [GitHub issue](https://github.com/mokkapps/RebelGamer/issues)
 
 # Using
 * [React Native](https://facebook.github.io/react-native/)
