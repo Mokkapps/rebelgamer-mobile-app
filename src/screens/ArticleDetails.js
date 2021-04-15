@@ -10,18 +10,17 @@ import {
   StyleSheet,
   View,
 } from 'react-native';
-import { Badge } from 'react-native-elements';
 import AutoHeightWebView from 'react-native-autoheight-webview';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import React, { useCallback, useState } from 'react';
 
 import ArticleDetailsHeader from '../components/ArticleDetailsHeader';
 import HeaderButton from '../components/HeaderButton';
-import Post from '../wp-types';
 import ArticleDetailsHtmlStyle from '../article-details-html-styles';
 import translate from '../translate';
 import { REBELGAMER_RED } from '../constants';
 import decodeHtml from '../html-decoder';
+import { Badge } from 'react-native-elements';
 
 type Props = {
   navigation: any,
@@ -75,10 +74,6 @@ const ArticleDetails = ({ route, navigation }): Props => {
     });
   }, [article.link, navigation]);
 
-  const onLinkPress = async (evt: any, href: string) => {
-    await openUrl(href);
-  };
-
   const onShouldStartLoadWithRequest = async (event): boolean => {
     if (Platform.OS === 'ios' && event.navigationType === 'click') {
       await openUrl(event.url);
@@ -95,11 +90,6 @@ const ArticleDetails = ({ route, navigation }): Props => {
     }
 
     return true;
-  };
-
-  const onTagSelect = tagName => {
-    navigation.goBack();
-    navigation.state.params.onTagSelect(tagName);
   };
 
   const shareArticle = useCallback(() => {
@@ -132,13 +122,12 @@ const ArticleDetails = ({ route, navigation }): Props => {
 
   const tags = article._embedded['wp:term'][1].map(tag => (
     <Badge
-      containerStyle={{ margin: 7 }}
       badgeStyle={{ backgroundColor: REBELGAMER_RED }}
       key={tag.id}
       value={tag.name || ''}
       textStyle={{ color: 'white' }}
-      // containerStyle={{ margin: 10 }}
       onPress={() => navigate('ArticleSearch', { tagName: tag.name })}
+      text={tag.name || ''}
     />
   ));
 

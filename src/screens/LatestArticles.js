@@ -29,18 +29,18 @@ const LatestArticles = ({ navigation }): Props => {
     navigation.setOptions({
       title: '',
       headerTitle: () => <HeaderImage />,
+      headerBackImage: () => <HeaderImage />,
+      headerTitleAlign: 'center',
       headerRight: () => (
-        <HeaderButtons HeaderButtonComponent={HeaderButton} color="black">
+        <HeaderButtons HeaderButtonComponent={HeaderButton}>
           <Item
             title="Search"
             iconName="search"
-            color="black"
             onPress={() => navigation.navigate('ArticleSearch')}
           />
           <Item
             title="About"
             iconName="info-outline"
-            color="black"
             onPress={() => navigation.navigate('About')}
           />
         </HeaderButtons>

@@ -106,7 +106,7 @@ def enableProguardInReleaseBuilds = false
  * The international variant includes ICU i18n library and necessary data
  * allowing to use e.g. `Date.toLocaleString` and `String.localeCompare` that
  * give correct results when using with locales other than en-US.  Note that
- * this variant is about 6MiB larger per architecture than default.
+ * this variant is about 6MiB larger px1er architecture than default.
  */
 def jscFlavor = 'org.webkit:android-jsc:+'
 
@@ -133,8 +133,8 @@ android {
         applicationId "de.rebelgamer.RebelGamerRSS"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 43
-        versionName "3.2.3"
+        versionCode 44
+        versionName "3.3"
     }
     splits {
         abi {
@@ -178,7 +178,6 @@ android {
                 output.versionCodeOverride =
                         defaultConfig.versionCode * 1000 + versionCodes.get(abi)
             }
-
         }
     }
 }
@@ -189,13 +188,16 @@ dependencies {
     implementation "com.facebook.react:react-native:+"  // From node_modules
 
     implementation "androidx.swiperefreshlayout:swiperefreshlayout:1.0.0"
+
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.fbjni'
     }
+
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
         exclude group:'com.squareup.okhttp3', module:'okhttp'
     }
+
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}") {
         exclude group:'com.facebook.flipper'
     }
@@ -207,16 +209,6 @@ dependencies {
     } else {
         implementation jscFlavor
     }
-
-    implementation project(':react-native-webview')
-    implementation project(':react-native-snackbar')
-    implementation project(':@react-native-community_netinfo')
-    implementation project(':react-native-gesture-handler')
-    implementation project(':react-native-vector-icons')
-    implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
-    implementation 'androidx.appcompat:appcompat:1.1.0-rc01'
-    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.1.0-alpha02'
 }
 
 // Run this once to be able to run the application with BUCK

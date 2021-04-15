@@ -54,11 +54,13 @@ const styles = StyleSheet.create({
   },
 });
 
-const About = () => {
-  //FIXME  static navigationOptions = {
-  //   title: '',
-  //   headerTintColor: REBELGAMER_RED,
-  // };
+const About = ({ navigation }) => {
+  React.useLayoutEffect(() => {
+    navigation.setOptions({
+      title: '',
+      headerTintColor: REBELGAMER_RED,
+    });
+  }, [navigation]);
 
   const onPressContact = () => {
     const os = Platform.OS === 'ios' ? 'iOS' : 'Android';

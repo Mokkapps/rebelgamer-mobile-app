@@ -1,4 +1,4 @@
-package de.rebelgamer.RebelGamerRSS;
+package de.mokkapps.rebelgamer.news;
 
 import com.facebook.react.ReactActivity;
 import com.facebook.react.ReactActivityDelegate;

@@ -1,4 +1,4 @@
-package de.rebelgamer.RebelGamerRSS;
+package de.mokkapps.rebelgamer.news;
 
 import android.app.Application;
 import android.content.Context;
