@@ -13,7 +13,7 @@ import React from 'react';
 import { NavigationState } from 'react-navigation';
 
 import ArticleListItem from './ArticleListItem';
-import Post from '../wp-types';
+import Post from '../types/wp-types';
 import { REBELGAMER_RED } from '../constants';
 import translate from '../translate';
 

@@ -1,4 +1,4 @@
-import isTablet from './device-detector';
+import isTablet from './utils/device-detector';
 
 export const WP_BASE_URL = 'https://www.rebelgamer.de/wp-json/wp/v2/';
 export const POSTS_PER_PAGE = 5;

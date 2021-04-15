@@ -13,7 +13,7 @@ import { Text } from 'react-native-elements';
 import email from 'react-native-email';
 
 import { version } from '../../version.json';
-import isTablet from '../device-detector';
+import isTablet from '../utils/device-detector';
 import {
   REBELGAMER_RED,
   MOKKAPPS_MAIL,

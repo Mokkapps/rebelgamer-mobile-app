@@ -14,12 +14,12 @@ import AutoHeightWebView from 'react-native-autoheight-webview';
 import { HeaderButtons, Item } from 'react-navigation-header-buttons';
 import React, { useCallback, useState } from 'react';
 
-import ArticleDetailsHeader from '../components/ArticleDetailsHeader';
-import HeaderButton from '../components/HeaderButton';
-import ArticleDetailsHtmlStyle from '../article-details-html-styles';
-import translate from '../translate';
-import { REBELGAMER_RED } from '../constants';
-import decodeHtml from '../html-decoder';
+import ArticleDetailsHeader from '../../components/ArticleDetailsHeader';
+import HeaderButton from '../../components/HeaderButton';
+import ArticleDetailsHtmlStyle from './article-details-html-styles';
+import translate from '../../translate';
+import { REBELGAMER_RED } from '../../constants';
+import decodeHtml from '../../utils/html-decoder';
 import { Badge } from 'react-native-elements';
 
 type Props = {

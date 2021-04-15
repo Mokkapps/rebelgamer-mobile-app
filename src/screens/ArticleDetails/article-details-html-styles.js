@@ -1,5 +1,5 @@
-import isTablet from './device-detector';
-import { HEADLINE_IMAGE_HEIGHT } from './constants';
+import isTablet from '../../utils/device-detector';
+import { HEADLINE_IMAGE_HEIGHT } from '../../constants';
 
 const fontSizeParagraph = isTablet() ? 22 : 17;
 

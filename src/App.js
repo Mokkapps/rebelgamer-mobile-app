@@ -9,7 +9,7 @@ import { NavigationContainer } from '@react-navigation/native';
 import LatestArticles from './screens/LatestArticles';
 import { InternetContext } from './context/InternetContext';
 import About from './screens/About';
-import ArticleDetails from './screens/ArticleDetails';
+import ArticleDetails from './screens/ArticleDetails/ArticleDetails';
 import ArticleSearch from './screens/ArticleSearch';
 
 const App = () => {

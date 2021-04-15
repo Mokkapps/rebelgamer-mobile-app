@@ -8,7 +8,7 @@ import AsyncStorage from '@react-native-community/async-storage';
 import ArticleList from '../components/ArticleList';
 import HeaderImage from '../components/HeaderImage';
 import HeaderButton from '../components/HeaderButton';
-import Post from '../wp-types';
+import Post from '../types/wp-types';
 import translate from '../translate';
 import { STORAGE_KEY } from '../constants';
 import {

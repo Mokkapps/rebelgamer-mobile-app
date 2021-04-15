@@ -2,14 +2,14 @@
 import { Dimensions, Image, StyleSheet, Text, View } from 'react-native';
 import React, { useRef, useEffect } from 'react';
 
-import Post from '../wp-types';
+import Post from '../types/wp-types';
 import {
   HEADLINE_IMAGE_HEIGHT,
   FONT_SIZE_HEADLINE,
   FONT_SIZE_LIST_DATE,
 } from '../constants';
 import getPostedAtDateString from '../utils/date-utils';
-import decodeHtml from '../html-decoder';
+import decodeHtml from '../utils/html-decoder';
 
 type Props = {
   article: Post,

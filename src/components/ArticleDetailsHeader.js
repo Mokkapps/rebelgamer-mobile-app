@@ -4,13 +4,13 @@ import { Image, StyleSheet, Text } from 'react-native';
 import React from 'react';
 import moment from 'moment';
 
-import Post from './../wp-types';
+import Post from '../types/wp-types';
 import {
   FONT_SIZE_DETAILS_DATE,
   HEADLINE_IMAGE_HEIGHT,
   FONT_SIZE_HEADLINE,
 } from '../constants';
-import decodeHtml from '../html-decoder';
+import decodeHtml from '../utils/html-decoder';
 
 type Props = {
   article: typeof Post,
