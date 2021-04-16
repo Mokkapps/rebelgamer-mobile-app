@@ -133,7 +133,7 @@ android {
         applicationId "de.rebelgamer.RebelGamerRSS"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 44
+        versionCode 45
         versionName "3.3"
     }
     splits {
