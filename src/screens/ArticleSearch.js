@@ -8,6 +8,7 @@ import HeaderSearchBar from '../components/HeaderSearchBar';
 import FullScreenLoadingIndicator from '../components/FullScreenLoadingIndicator';
 import translate from '../translate';
 import {
+  getPostList,
   getWordpressUrl,
   removeDuplicates,
   showErrorAlert,
@@ -28,8 +29,6 @@ const ArticleSearch = ({ route, navigation }): Props => {
     getWordpressUrl(page, ''),
     [],
   );
-
-  const prevData = usePrevious(data);
 
   let query = '';
   if (route.params) {
@@ -65,16 +64,7 @@ const ArticleSearch = ({ route, navigation }): Props => {
   };
 
   useEffect(() => {
-    let newPostsWithoutDuplicates = data;
-
-    if (page > 1) {
-      newPostsWithoutDuplicates = removeDuplicates(
-        [...prevData, ...newPostsWithoutDuplicates],
-        'id',
-      );
-    }
-
-    setPosts(newPostsWithoutDuplicates);
+    setPosts(getPostList(posts, data, page));
   }, [data]);
 
   useEffect(() => {

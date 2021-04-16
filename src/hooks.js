@@ -1,12 +1,6 @@
 // Inspired from https://github.com/the-road-to-learn-react/react-hooks-introduction/blob/master/src/useDataApiHook-example/index.js
 
-import React, {
-  Fragment,
-  useState,
-  useEffect,
-  useReducer,
-  useRef,
-} from 'react';
+import React, { useState, useEffect, useReducer } from 'react';
 import axios from 'axios';
 
 const dataFetchReducer = (state, action) => {
@@ -67,12 +61,4 @@ export const useDataApi = (initialUrl, initialData) => {
   }, [url]);
 
   return [state, setUrl];
-};
-
-export const usePrevious = value => {
-  const ref = useRef();
-  useEffect(() => {
-    ref.current = value;
-  });
-  return ref.current;
 };

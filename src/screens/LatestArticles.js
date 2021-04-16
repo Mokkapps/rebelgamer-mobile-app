@@ -12,6 +12,7 @@ import Post from '../types/wp-types';
 import translate from '../translate';
 import { STORAGE_KEY } from '../constants';
 import {
+  getPostList,
   getWordpressUrl,
   removeDuplicates,
   showErrorAlert,
@@ -58,8 +59,6 @@ const LatestArticles = ({ navigation }): Props => {
     [],
   );
 
-  const prevData = usePrevious(data);
-
   useEffect(() => {
     if (!isLoading) {
       setIsLoadingMoreArticles(false);
@@ -67,19 +66,12 @@ const LatestArticles = ({ navigation }): Props => {
   }, [isLoading]);
 
   useEffect(() => {
-    let newPostsWithoutDuplicates = data;
-
-    if (page > 1) {
-      newPostsWithoutDuplicates = removeDuplicates(
-        [...prevData, ...newPostsWithoutDuplicates],
-        'id',
-      );
-    }
+    const newPosts = getPostList(posts, data, page);
 
     setIsLoadingMoreArticles(false);
-    setPosts(newPostsWithoutDuplicates);
+    setPosts(newPosts);
 
-    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newPostsWithoutDuplicates))
+    AsyncStorage.setItem(STORAGE_KEY, JSON.stringify(newPosts))
       .then(() => {})
       .catch(err => console.error('Failed saving posts', err));
   }, [data]);
