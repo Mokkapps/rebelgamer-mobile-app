@@ -44,7 +44,7 @@
     "moment": "^2.24.0",
     "prop-types": "^15.7.2",
     "react": "17.0.1",
-    "react-native": "0.64.0",
+    "react-native": "0.64.1",
     "react-native-autoheight-webview": "^1.5.8",
     "react-native-elements": "^3.3.2",
     "react-native-email": "^1.1.0",
