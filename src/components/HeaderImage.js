@@ -11,6 +11,7 @@ const styles = StyleSheet.create({
     marginLeft: Platform.OS === 'android' ? -150 : 0,
     marginTop: 5,
     height: 30,
+    width: 250,
     resizeMode: 'contain',
   },
 });

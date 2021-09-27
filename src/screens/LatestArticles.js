@@ -28,9 +28,7 @@ type Props = {
 const LatestArticles = ({ navigation }): Props => {
   React.useLayoutEffect(() => {
     navigation.setOptions({
-      title: '',
       headerTitle: () => <HeaderImage />,
-      headerBackImage: () => <HeaderImage />,
       headerTitleAlign: 'center',
       headerRight: () => (
         <HeaderButtons HeaderButtonComponent={HeaderButton}>
