@@ -55,6 +55,7 @@
     "react-native-snackbar": "^2.4.0",
     "react-native-vector-icons": "^8.1.0",
     "react-native-webview": "^11.3.2",
+    "react-navigation": "^4.4.4",
     "react-navigation-header-buttons": "^7.0.1"
   },
   "devDependencies": {
