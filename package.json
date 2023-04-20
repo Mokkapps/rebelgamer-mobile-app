@@ -38,7 +38,7 @@
     "@react-native-community/netinfo": "^6.0.0",
     "@react-navigation/native": "^6.0.4",
     "@react-navigation/stack": "^6.0.9",
-    "axios": "^0.21.1",
+    "axios": "^0.21.2",
     "babel-plugin-transform-remove-console": "^6.9.4",
     "html-entities": "^1.2.1",
     "moment": "^2.24.0",
